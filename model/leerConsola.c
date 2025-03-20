@@ -5,13 +5,14 @@
 #include <stdio.h>
 #include "leerConsola.h"
 
-int leerInteger(char *numero, int *lecturaCorrecta){
+int leerInteger(char *numero){
 
     if (strchr(numero, '\n') != NULL)
     {
         numero[strcspn(numero, "\n")] = '\0';
     } else {
         printf("Error: buffer desbordado\n");
+
         char c;
         while ((c = getchar()) != '\n' && c != EOF); 
         return -1; 
@@ -37,7 +38,6 @@ int leerInteger(char *numero, int *lecturaCorrecta){
         printf("Error: numero introducido fuera del rango de integer\n");
         return -1;
     } else {
-        *lecturaCorrecta = 0;
         return (int) resultado;
     }
     

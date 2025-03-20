@@ -1,2 +1,2 @@
 
-int leerInteger(char *numero, int *lecturaCorrecta);
+int leerInteger(char *numero);

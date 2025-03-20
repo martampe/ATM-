@@ -1,0 +1,2 @@
+
+void mostrarInterfazHistorial(void);
