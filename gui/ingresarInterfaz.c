@@ -1,14 +1,14 @@
-#include "retirarInterfaz.h"
-#include "leerConsola.h"
+#include "ingresarInterfaz.h"
 #include <stdio.h>
-void mostrarRetirarInterfaz(void){
+#include "leerConsola.h"
+void mostrarIngresarInterfaz(void){
 
     char buffer[10];
     int cantidad;
     do{
-        printf("Retirar Dinero\n");
+        printf("Ingresar Dinero\n");
         printf("[0] Volver al menu principal\n"
-            "Introduzca la cantidad a retirar ('0' para cancelar): ");
+            "Introduzca la cantidad a ingresar ('0' para cancelar): ");
         fgets(buffer, sizeof(buffer), stdin);
         cantidad = leerInteger(buffer);
 
@@ -24,7 +24,7 @@ void mostrarRetirarInterfaz(void){
                 char bufferConfimacion[3];
                 do 
                 {   
-                    printf("Retiro de %d euros:\n"
+                    printf("Ingreso de %d euros:\n"
                         "[1] Confirmar operacion\n"
                         "[2] Cancelar transaccion\n"
                         "Seleccionar operacion: ", cantidad);
@@ -49,7 +49,7 @@ void mostrarRetirarInterfaz(void){
 
                 } while (confirmacion != 1 && confirmacion != 2);
             } else {
-                printf("Solo se puede retirar una cantidad positiva de dinero\n");
+                printf("Solo se puede ingresar una cantidad positiva de dinero\n");
             }
             
             

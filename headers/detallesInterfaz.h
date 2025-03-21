@@ -1,2 +1,0 @@
-
-void mostrarDetallesInterfaz(void);

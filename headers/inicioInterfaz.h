@@ -1,2 +1,2 @@
 
-void mostrarInterfazInicio(void);
+void mostrarInicioInterfaz(void);

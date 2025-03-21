@@ -4,8 +4,11 @@
 #include "leerConsola.h"
 #include "historialInterfaz.h"
 #include "retirarInterfaz.h"
-
-void mostrarInterfazInicio(void){
+#include "ingresarInterfaz.h"
+#include "transaccionInterfaz.h"
+#include "cuentasInterfaz.h"
+#include "configuracionInterfaz.h"
+void mostrarInicioInterfaz(void){
 
     //historial
     //retirar
@@ -34,7 +37,7 @@ void mostrarInterfazInicio(void){
         case 1:
 
             printf("Seleccionado mostrar historial\n");
-            mostrarInterfazHistorial();
+            mostrarHistorialInterfaz();
             break;
         case 2:
             printf("Seleccionado retirar dinero\n");
@@ -42,15 +45,19 @@ void mostrarInterfazInicio(void){
             break;
         case 3:
             printf("Seleccionado ingresar dinero\n");
+            mostrarIngresarInterfaz();
             break;
         case 4:
             printf("Seleccionado realizar transaccion\n");
+            mostrarTransaccionInterfaz();
             break;
         case 5:
             printf("Seleccionado mostrar cuentas\n");
+            mostrarCuentasInterfaz();
             break;
         case 6:
             printf("Seleccionado configuracion\n");
+            mostrarConfiguracionInterfaz();
             break;
         case 7:
             printf("Saliendo del programa...\n");

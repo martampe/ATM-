@@ -5,7 +5,7 @@
 #include "inicioInterfaz.h"
 #include "loginInterfaz.h"
 
-void mostrarInterfazLogin(void){
+void mostrarLoginInterfaz(void){
 
     char buffer[3];
     int seleccion;
@@ -23,7 +23,7 @@ void mostrarInterfazLogin(void){
         case 1:
 
             printf("Seleccionado inicar sesion\n");
-            mostrarInterfazInicio();
+            mostrarInicioInterfaz();
             break;
         case 2:
             printf("Seleccionado registrarse\n");
