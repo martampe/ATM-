@@ -3,6 +3,71 @@
 #include "leerConsola.h"
 #include "sistem.h"
 
+enum OPERACION{
+    ELIMINARTARJETA,
+    CREARTARJETA,
+    ELIMINARCUENTA,
+    CREARCUENTA
+};
+
+int confirmacion(int seleccion, char *mensaje){
+
+    int opcionValida = -1;
+
+    while (opcionValida != 0)
+    {
+        if (seleccion > 0)
+       {
+        char bufferConfirmacion[3];
+        int confirmacion;   
+            do 
+            {
+                clearScreen();
+                printf("%s", mensaje);
+                printf("[1] Confirmar operacion\n"
+                    "[2] Cancelar operacion\n"
+                    "Seleccionar operacion: ");
+
+                fgets(bufferConfirmacion, sizeof(bufferConfirmacion), stdin);
+                confirmacion = leerInteger(bufferConfirmacion);
+                
+                switch (confirmacion)
+                {
+                case 1:
+                    return 0;
+                    break;
+                
+                case 2:
+                    clearScreen();
+                    printf("Operacion cancelada\n");
+                    printf("Persiona enter para continuar...");
+                    limpiarBuffer();
+                    return 1;
+                    break;
+                default:
+                    clearScreen();
+                    printf("Opcion no valida. Intentelo de nuevo\n");
+                    printf("Persiona enter para continuar...");
+                    limpiarBuffer();
+                    return 1;
+                    break;
+                    
+                }
+
+            } while (confirmacion != 1 && confirmacion != 2);
+       } else if (seleccion != 0){
+            clearScreen();
+            printf("Opcion no valida. Intentelo de nuevo\n");
+            printf("Persiona enter para continuar...");
+            limpiarBuffer();
+            return 1;
+       }
+    }
+    
+
+    
+}
+
 void eliminarTarjeta(){
     
 
@@ -17,55 +82,22 @@ void eliminarTarjeta(){
 
         fgets(buffer, sizeof(buffer), stdin);
         seleccion = leerInteger(buffer);
-       
-       if (seleccion > 0)
+        if(seleccion == 0) break;
+
+        char mensaje[30];
+        snprintf(mensaje, sizeof(mensaje), "Eliminar tarjeta %d\n", seleccion);
+
+        int confirmada = confirmacion(seleccion, mensaje);
+
+       if (confirmada == 0)
        {
-        char bufferConfirmacion[3];
-        int confirmacion;   
-            do 
-            {
-                clearScreen();
-                
-                printf("Eliminar tarjeta %d\n"
-                    "[1] Confirmar operacion\n"
-                    "[2] Cancelar operacion\n"
-                    "Seleccionar operacion: ", seleccion);
-
-                fgets(bufferConfirmacion, sizeof(bufferConfirmacion), stdin);
-                confirmacion = leerInteger(bufferConfirmacion);
-                
-                switch (confirmacion)
-                {
-                case 1:
-                    //Eliminar tarjeta
-                    clearScreen();
-                    printf("Tarjeta %d eliminada\n", seleccion);
-                    printf("Persiona enter para continuar...");
-                    limpiarBuffer();
-                    break;
-                
-                case 2:
-                    clearScreen();
-                    printf("Operacion cancelada\n");
-                    printf("Persiona enter para continuar...");
-                    limpiarBuffer();
-                    break;
-                default:
-                    clearScreen();
-                    printf("Opcion no valida. Intentelo de nuevo\n");
-                    printf("Persiona enter para continuar...");
-                    limpiarBuffer();
-                    break;
-                    
-                }
-
-            } while (confirmacion != 1 && confirmacion != 2);
-       } else if (seleccion != 0){
             clearScreen();
-            printf("Opcion no valida. Intentelo de nuevo\n");
+            printf("Tarjeta %d eliminada\n", seleccion);
             printf("Persiona enter para continuar...");
             limpiarBuffer();
        }
+       
+       
        
 
     } while (seleccion != 0);
@@ -83,60 +115,33 @@ void crearTarjeta(){
 
         fgets(buffer, sizeof(buffer), stdin);
         seleccion = leerInteger(buffer);
-       
-        if (seleccion == 1)
-        {
-            char bufferConfirmacion[3];
-            int confirmacion;   
-            do 
-            {   
-                clearScreen();
-                
-                printf("[1] Confirmar operacion\n"
-                    "[2] Cancelar operacion\n"
-                    "Seleccionar operacion: ");
-
-                fgets(bufferConfirmacion, sizeof(bufferConfirmacion), stdin);
-                confirmacion = leerInteger(bufferConfirmacion);
-                
-                switch (confirmacion)
-                {
-                case 1:
-                    //Crear tarjeta
-                    
-                    clearScreen();
-                    printf("Tarjeta creada. Datos: ....\n");
-                    printf("Persiona enter para continuar...");
-                    limpiarBuffer();
-                    break;
-                
-                case 2:
-                    
-                    clearScreen();
-                    printf("Operacion cancelada\n");
-                    printf("Persiona enter para continuar...");
-                    limpiarBuffer();
-                    break;
-                default:
-                    clearScreen();
-                    printf("Opcion no valida. Intentelo de nuevo\n");
-                    printf("Persiona enter para continuar...");
-                    limpiarBuffer();
-                    break;
-                }
-
-            } while (confirmacion != 1 && confirmacion != 2);
-        } else if(seleccion != 0){
+        
+        if(seleccion == 0) break;
+        if(seleccion != 1) {
             clearScreen();
             printf("Opcion no valida. Intentelo de nuevo\n");
             printf("Persiona enter para continuar...");
             limpiarBuffer();
+            break;
         }
+        char mensaje[30];
+        snprintf(mensaje, sizeof(mensaje), "Crear cuenta\n");
+
+        int confirmada = confirmacion(seleccion, mensaje);
+
+       if (confirmada == 0)
+       {
+            clearScreen();
+            printf("Tarjeta creada. Datos...\n");
+            printf("Persiona enter para continuar...");
+            limpiarBuffer();
+       }
         
         
        
 
     } while (seleccion != 0);
+
 }
 
 void eliminarCuenta(){
@@ -152,56 +157,20 @@ void eliminarCuenta(){
         fgets(buffer, sizeof(buffer), stdin);
         seleccion = leerInteger(buffer);
        
-       if (seleccion != 0)
+        if(seleccion == 0) break;
+
+        char mensaje[30];
+        snprintf(mensaje, sizeof(mensaje), "Eliminar tarjeta %d\n", seleccion);
+
+        int confirmada = confirmacion(seleccion, mensaje);
+
+       if (confirmada == 0)
        {
-            char bufferConfirmacion[3];
-            int confirmacion;   
-                do 
-                {
-                    clearScreen();
-                    printf("Eliminar cuenta %d\n"
-                        "[1] Confirmar operacion\n"
-                        "[2] Cancelar operacion\n"
-                        "Seleccionar operacion: ", seleccion);
-
-                    fgets(bufferConfirmacion, sizeof(bufferConfirmacion), stdin);
-                    confirmacion = leerInteger(bufferConfirmacion);
-                    
-                    switch (confirmacion)
-                    {
-                    case 1:
-                        //Eliminar cuenta
-                        clearScreen();
-                        printf("Cuenta %d eliminada\n", seleccion);
-                        printf("Persiona enter para continuar...");
-                        limpiarBuffer();
-                        break;
-                    
-                    case 2:
-                        clearScreen();
-                        printf("Operacion cancelada\n");
-                        printf("Persiona enter para continuar...");
-                        limpiarBuffer();
-                        break;
-                    default:
-                        clearScreen();
-                        printf("Opcion no valida. Intentelo de nuevo\n");
-                        printf("Persiona enter para continuar...");
-                        limpiarBuffer();
-                        break;
-                    }
-
-                } while (confirmacion != 1 && confirmacion != 2);
-        
-        
-        
-       } else if(seleccion != 0){
-        clearScreen();
-        printf("Opcion no valida. Intentelo de nuevo\n");
-        printf("Persiona enter para continuar...");
-        limpiarBuffer();
-    }
-       
+            clearScreen();
+            printf("Cuenta %d eliminada\n", seleccion);
+            printf("Persiona enter para continuar...");
+            limpiarBuffer();
+       }
 
     } while (seleccion != 0);
 }
@@ -219,54 +188,27 @@ void crearCuenta(){
         fgets(buffer, sizeof(buffer), stdin);
         seleccion = leerInteger(buffer);
        
-        if (seleccion == 1)
-        {
-            char bufferConfirmacion[3];
-            int confirmacion;   
-            do 
-            {
-                clearScreen();
-                printf("[1] Confirmar operacion\n"
-                    "[2] Cancelar operacion\n"
-                    "Seleccionar operacion: ");
-
-                fgets(bufferConfirmacion, sizeof(bufferConfirmacion), stdin);
-                confirmacion = leerInteger(bufferConfirmacion);
-                
-                switch (confirmacion)
-                {
-                case 1:
-                    //Crear cuenta
-                    clearScreen();
-                    printf("Cuenta creada. Datos: ....\n");
-                    printf("Persiona enter para continuar...");
-                    limpiarBuffer();
-                    break;
-                
-                case 2:
-                    clearScreen();
-                    printf("Operacion cancelada\n");
-                    printf("Persiona enter para continuar...");
-                    limpiarBuffer();
-                    break;
-                default:
-                    clearScreen();
-                    printf("Opcion no valida. Intentelo de nuevo\n");
-                    printf("Persiona enter para continuar...");
-                    limpiarBuffer();
-                    break;
-                }
-
-            } while (confirmacion != 1 && confirmacion != 2);
-        } else if(seleccion != 0){
+        if(seleccion == 0) break;
+        if(seleccion != 1) {
             clearScreen();
             printf("Opcion no valida. Intentelo de nuevo\n");
             printf("Persiona enter para continuar...");
             limpiarBuffer();
+            break;
         }
-        
-        
-       
+
+        char mensaje[30];
+        snprintf(mensaje, sizeof(mensaje), "Crear cuenta\n");
+
+        int confirmada = confirmacion(seleccion, mensaje);
+
+       if (confirmada == 0)
+       {
+            clearScreen();
+            printf("Cuenta creada. Datos...\n");
+            printf("Persiona enter para continuar...");
+            limpiarBuffer();
+       }
 
     } while (seleccion != 0);
 }
