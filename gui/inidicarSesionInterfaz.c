@@ -1,12 +1,11 @@
-#include "inicioInterfaz.h"
+#include "iniciarSesionInterfaz.h"
 #include "leerConsola.h"
-#include "registrarInterfaz.h"
+#include "inicioInterfaz.h"
 #include <stdio.h>
 #include "sistem.h"
 
-void iniciarRegistrar(){
+void iniciarSesion(){
     clearScreen();
-
     char bufferUsuario[30];
     char bufferContrasena[20];
 
@@ -19,7 +18,7 @@ void iniciarRegistrar(){
     mostrarInicioInterfaz();
 }
 
-void mostrarRegistrarInterfaz(void){
+void mostrarIniciarSesionInterfaz(void){
 
     
     char bufferSeleccion[3];
@@ -28,9 +27,9 @@ void mostrarRegistrarInterfaz(void){
     {
         clearScreen();
 
-        printf("Registro de usuario\n"
+        printf("Inicio se sesion\n"
             "[0] Volver al portal\n"
-            "[1] Registrar\n"
+            "[1] Iniciar sesion\n"
             "Seleccione operacion: ");
 
         fgets(bufferSeleccion, sizeof(bufferSeleccion), stdin);
@@ -41,7 +40,7 @@ void mostrarRegistrarInterfaz(void){
         case 0:
             break;
         case 1:
-            iniciarRegistrar();
+            iniciarSesion();
             break;
         default:
             clearScreen();

@@ -1,11 +1,13 @@
 #include "ingresarInterfaz.h"
 #include <stdio.h>
 #include "leerConsola.h"
+#include "sistem.h"
 void mostrarIngresarInterfaz(void){
-
     char buffer[10];
     int cantidad;
     do{
+        clearScreen();
+
         printf("Ingresar Dinero\n");
         printf("[0] Volver al menu principal\n"
             "Introduzca la cantidad a ingresar ('0' para cancelar): ");
@@ -16,6 +18,7 @@ void mostrarIngresarInterfaz(void){
         {
         case 0:
             printf("Seleccionado volver al menu principal\n");
+            break;
         default:
             
             if (cantidad > 0)
@@ -24,6 +27,7 @@ void mostrarIngresarInterfaz(void){
                 char bufferConfimacion[3];
                 do 
                 {   
+                    clearScreen();
                     printf("Ingreso de %d euros:\n"
                         "[1] Confirmar operacion\n"
                         "[2] Cancelar transaccion\n"
@@ -36,20 +40,32 @@ void mostrarIngresarInterfaz(void){
                     switch (confirmacion)
                     {
                     case 1:
+                        clearScreen();
                         printf("Retirando %d euros\n", cantidad);
+                        printf("Persiona enter para continuar...");
+                        limpiarBuffer();
                         break;
                     case 2:
+                        clearScreen();
                         printf("Operacion cancelada\n");
+                        printf("Persiona enter para continuar...");
+                        limpiarBuffer();
                         break;
                     default:
+                        clearScreen();
                         printf("Opción no válida. Inténtelo de nuevo.\n");
+                        printf("Persiona enter para continuar...");
+                        limpiarBuffer();
                         break;
                     }
                     
 
                 } while (confirmacion != 1 && confirmacion != 2);
             } else {
-                printf("Solo se puede ingresar una cantidad positiva de dinero\n");
+                clearScreen();
+                printf("No se puede ingresar una cantidad negativa de dinero\n");
+                printf("Persiona enter para continuar...");
+                limpiarBuffer();
             }
             
             

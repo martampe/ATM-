@@ -8,6 +8,7 @@
 #include "transaccionInterfaz.h"
 #include "cuentasInterfaz.h"
 #include "configuracionInterfaz.h"
+#include "sistem.h"
 void mostrarInicioInterfaz(void){
 
     //historial
@@ -20,6 +21,7 @@ void mostrarInicioInterfaz(void){
     char buffer[3];
     int seleccion;
     do{
+        clearScreen();
         printf("Menu principal\n");
         printf("[1] Mostrar historial\n"
             "[2] Retirar dinero\n"
@@ -63,7 +65,10 @@ void mostrarInicioInterfaz(void){
             printf("Saliendo del programa...\n");
             break;
         default:
+            clearScreen();
             printf("Opción no válida. Inténtelo de nuevo.\n");
+            printf("Persiona enter para continuar...");
+            limpiarBuffer();
         }
 
     } while (seleccion != 7 || seleccion == -1);

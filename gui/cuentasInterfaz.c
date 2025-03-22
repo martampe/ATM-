@@ -1,13 +1,14 @@
 #include "cuentasInterfaz.h"
 #include <stdio.h>
 #include "leerConsola.h"
+#include "sistem.h"
 
-void mostrarDetallesCuentaInterfaz(void){
-
+void mostrarDetallesCuentaInterfaz(int cuenta){
     char buffer[3];
     int seleccion;
     do{
-        printf("Detalles de Cuenta\n");
+        clearScreen();
+        printf("Detalles de Cuenta <<%d>>\n", cuenta);
         //printear transacciones
         printf("[0] Volver al a tus cuentas\n"
             "Introduzca operacion: ");
@@ -21,18 +22,21 @@ void mostrarDetallesCuentaInterfaz(void){
             break;
 
         default:
-            printf("Opción no válida. Inténtelo de nuevo.\n");
+            clearScreen();
+            printf("Opcion no valida. Intentelo de nuevo\n");
+            printf("Persiona enter para continuar...");
+            limpiarBuffer();
         }
 
     } while (seleccion != 0);
 }
 
 void mostrarCuentasInterfaz(void){
-
     char buffer[3];
     int seleccion;
     do{
-        printf("Detalles de Cuentas\n");
+        clearScreen();
+        printf("Cuentas\n");
         //printear transacciones
         printf("[0] Volver al menu principal\n"
             "Introduzca la cuenta ('0' para cancelar): ");
@@ -46,9 +50,12 @@ void mostrarCuentasInterfaz(void){
             return;
         } else if(seleccion > 0){
             printf("Seleccionado ver cuenta %d\n", seleccion);
-            mostrarDetallesCuentaInterfaz(); //pasar id de la cuenta
+            mostrarDetallesCuentaInterfaz(seleccion); //pasar id de la cuenta
         } else {
-            printf("Opcion no valida. Vuelva a intentar\n");
+            clearScreen();
+            printf("Opcion no valida. Intentelo de nuevo\n");
+            printf("Persiona enter para continuar...");
+            limpiarBuffer();
         }
         
 

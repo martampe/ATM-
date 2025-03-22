@@ -5,6 +5,11 @@
 #include <stdio.h>
 #include "leerConsola.h"
 
+void limpiarBuffer(){
+    char c;
+    while ((c = getchar()) != '\n' && c != EOF); 
+}
+
 int leerInteger(char *numero){
 
     if (strchr(numero, '\n') != NULL)
@@ -12,9 +17,7 @@ int leerInteger(char *numero){
         numero[strcspn(numero, "\n")] = '\0';
     } else {
         printf("Error: buffer desbordado\n");
-
-        char c;
-        while ((c = getchar()) != '\n' && c != EOF); 
+        limpiarBuffer();
         return -1; 
     }
     
