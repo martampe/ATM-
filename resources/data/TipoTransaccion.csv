@@ -1,0 +1,5 @@
+codTipoTrans,nombre
+1,Transferencia
+2,Pago con tarjeta
+3,Retiro en efectivo
+4,Ingreso en efectivo
