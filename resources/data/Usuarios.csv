@@ -1,4 +1,3 @@
-dni,nombre,apellido,fecha_nac,email,tlfno,password,pregunta_seguridad,respuesta_seguridad,dir
 12345678A,Juan,García Pérez,1985-04-12,juan.garcia@email.com,612345678,p@ssw0rd123,¿Nombre de tu primera mascota?,Rocky,"Calle Mayor 23, Madrid"
 23456789B,María,López Sánchez,1990-08-25,maria.lopez@email.com,623456789,secur3P@ss,¿Ciudad donde naciste?,Barcelona,"Avda. Diagonal 145, Barcelona"
 34567890C,Carlos,Martínez Rodríguez,1978-11-03,carlos.martinez@email.com,634567890,c@rl0s2023,¿Nombre de tu colegio primario?,San José,"Calle Gran Vía 78, Madrid"
