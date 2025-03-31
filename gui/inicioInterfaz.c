@@ -21,7 +21,7 @@ void mostrarInicioInterfaz(void){
     char buffer[3];
     int seleccion;
     do{
-        clearScreen();
+        //clearScreen();
         printf("Menu principal\n");
         printf("[1] Mostrar historial\n"
             "[2] Retirar dinero\n"
