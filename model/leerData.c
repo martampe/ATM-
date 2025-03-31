@@ -139,11 +139,9 @@ void leerAcceso(){
         return;
     }
     
-    int idx = 0;
-
     char linea[100];
-
-    while ((fgets(linea, sizeof(linea), accesoFile)) != NULL);
+    fseek(accesoFile, 0L, SEEK_SET);
+    while ((fgets(linea, sizeof(linea), accesoFile)) != NULL)
     {
         //dni,numCuenta
 
