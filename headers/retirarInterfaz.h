@@ -1,0 +1,2 @@
+
+void mostrarRetirarInterfaz(void);

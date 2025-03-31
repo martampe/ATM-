@@ -1,0 +1,2 @@
+
+void mostrarTransaccionInterfaz(void);

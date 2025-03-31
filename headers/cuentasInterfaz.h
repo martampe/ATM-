@@ -1,0 +1,2 @@
+
+void mostrarCuentasInterfaz(void);
