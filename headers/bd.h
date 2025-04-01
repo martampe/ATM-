@@ -1,1 +1,1 @@
-void crearTablasBD();
+void cargarBD();
