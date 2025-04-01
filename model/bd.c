@@ -92,6 +92,7 @@ void guardarUsuario(sqlite3 *db, Usuario *usuario){
     sqlite3_bind_text(stmt, 10, usuario->password, -1, SQLITE_STATIC);
 
 
+    
     // Ejecutarlo para actualizar los datos
     rt = sqlite3_step(stmt);
     if (rt != SQLITE_DONE) {     // comprobar que se ha hecho correctamente
