@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Cross-Platform",
+            "includePath": [
+            "${workspaceFolder}/ATMProyecto/**", 
+            "${workspaceFolder}/ATMProyecto/headers",
+            "${workspaceFolder}/ATMProyecto/resources/bd/librarias"
+            ],           
+            "defines": [],
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "${default}"
+        }
+    ],
+    "version": 4
+}

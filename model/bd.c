@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <sqlite3.h>
-#include <usuario.h>
+#include "sqlite3.h"
+#include "usuario.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -34,7 +34,7 @@ Usuario* cargarUsuario(sqlite3 *db, const char *dni, const char *password){
     const char **pzTail --> puntero que, si no es NULL, apuntará a la parte de la consulta SQL que no fue procesada. 
    */
    
-   int filas = sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
+   int rt = sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
     // Asignar valores a los parámetros `?`
     sqlite3_bind_text(stmt, 1, dni, -1, SQLITE_STATIC);
@@ -47,6 +47,8 @@ Usuario* cargarUsuario(sqlite3 *db, const char *dni, const char *password){
     usuario = malloc(sizeof(Usuario));
 
     // ¿Que hacer si el malloc no va? X_X
+    //Si no va, malloc devuelve null, salir con return;
+    if(usuario == NULL) return NULL;
 
 
     
@@ -74,7 +76,8 @@ void guardarUsuario(sqlite3 *db, Usuario *usuario){
     sqlite3_stmt *stmt;
     char *sql = "UPDATE USUARIO SET nombre = ?, apellidos = ?, fechaNac = ?, email = ?, telefono = ?, pregunta_seguridad = ?, respuesta_seguridad = ?, dir = ? WHERE dni = ? AND password = ?";
 
-    int respuesta = sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
+    int rt = sqlite3_prepare_v2(db, sql, -1, &stmt, 0); //No devuelve filas, devuelve un estado, OK || ERROR
+    if(rt != SQLITE_OK) return;
 
     // Asignar valores a los parámetros `?`
     sqlite3_bind_text(stmt, 1, usuario->dni, -1, SQLITE_STATIC);
@@ -90,12 +93,12 @@ void guardarUsuario(sqlite3 *db, Usuario *usuario){
 
 
     // Ejecutarlo para actualizar los datos
-    respuesta = sqlite3_step(stmt);
-    if (respuesta != SQLITE_DONE) {     // comprobar que se ha hecho correctamente
-        printf("Error actualizando usuario: %s\n");
-    } else {
-        printf("Usuario actualizado correctamente.\n");
-    }
+    rt = sqlite3_step(stmt);
+    if (rt != SQLITE_DONE) {     // comprobar que se ha hecho correctamente
+        printf("Error actualizando usuario: %s\n", sqlite3_errmsg(db));
+    } 
+
+    printf("Usuario actualizado correctamente.\n");
 
     // Liberar memoria del statement
     sqlite3_finalize(stmt);
