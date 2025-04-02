@@ -3,7 +3,9 @@
 #include "transaccion.h"
 
 int contarLineas(FILE *file);
-Usuario* leerUsuarios();
+void leerUsuarios();
 
-Transaccion* leerTransacciones();
+void leerTransacciones();
 void leerAcceso();
+void leerTarjetas();
+void leerCuentas();

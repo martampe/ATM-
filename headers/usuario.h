@@ -1,6 +1,12 @@
+typedef enum{
+    YES,
+    NO
+}VALIDO;
+
 typedef struct 
 {
     //dni, nombre, apellido, fecha_nac, email, tlfno, password, pregunta_seguridad, respuesta_seguridad, dir
+    VALIDO usuarioValido;
     char dni[10];
     char nombre [20];
     char apellidos [40];
