@@ -1,4 +1,4 @@
-#include "leerData.h"
+ #include "leerData.h"
 #include <stdlib.h>
 #include <string.h>
 #include "leerConsola.h"
