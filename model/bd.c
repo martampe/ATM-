@@ -51,7 +51,6 @@ Usuario* cargarUsuario(sqlite3 *db, const char *dni, const char *password){
     if(usuario == NULL) return NULL;
 
 
-    
     // Tomar los datos del usuario encontrado
     strcpy(usuario->dni, (const char*) sqlite3_column_text(stmt, 0));
     strcpy(usuario->nombre, (const char*) sqlite3_column_text(stmt, 1));
