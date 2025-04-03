@@ -1,24 +1,27 @@
 #include <stdio.h>
+#include "bd.h"
 #include "sqlite3.h"
 #include "usuario.h"
 #include <string.h>
 #include <stdlib.h>
 
+static sqlite3* dbHandler = NULL;
+
 // Abrir BD
-sqlite3* abrirBD(){
+void abrirBD(){
     sqlite3 *db;
     int comprobante = sqlite3_open("bd.db", &db);
 
-    if (comprobante){
+    if (comprobante != SQLITE_OK){ //Comprobar sqlite OK
         printf("No se ha podido abrir a BD.");  // estaria bien que saliese en formato error
-    }else{
-        printf("BD abierta.");
+        return;
     }
 
-    return db;
+    dbHandler = db;
+
 }
 
-Usuario* cargarUsuario(sqlite3 *db, const char *dni, const char *password){
+Usuario* cargarUsuario(const char *dni, const char *password){
    // FALTA LIBERAR MEMORIA AAAAAAAAAAAAAAAAAAAAAAAHHHHHHHH
     
     // Crear el statement + La consulta
@@ -34,21 +37,22 @@ Usuario* cargarUsuario(sqlite3 *db, const char *dni, const char *password){
     const char **pzTail --> puntero que, si no es NULL, apuntará a la parte de la consulta SQL que no fue procesada. 
    */
    
-   int rt = sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
+   int rc = sqlite3_prepare_v2(dbHandler, sql, -1, &stmt, NULL);
 
     // Asignar valores a los parámetros `?`
     sqlite3_bind_text(stmt, 1, dni, -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 2, password, -1, SQLITE_STATIC);
 
-   Usuario *usuario = NULL;
 
-   // Buscar el usuario ejecutando la consulta (Dios mio donde nos hemos metido)
-   if (sqlite3_step(stmt) == SQLITE_ROW) {
-    usuario = malloc(sizeof(Usuario));
+    Usuario *usuario = NULL;
 
-    // ¿Que hacer si el malloc no va? X_X
-    //Si no va, malloc devuelve null, salir con return;
-    if(usuario == NULL) return NULL;
+    // Buscar el usuario ejecutando la consulta (Dios mio donde nos hemos metido)
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        usuario = malloc(sizeof(Usuario));
+
+        // ¿Que hacer si el malloc no va? X_X
+        //Si no va, malloc devuelve null, salir con return;
+        if(usuario == NULL) return NULL;
 
 
     
@@ -64,19 +68,19 @@ Usuario* cargarUsuario(sqlite3 *db, const char *dni, const char *password){
     strcpy(usuario->respuesta_seguridad, (const char*) sqlite3_column_text(stmt, 8));
     strcpy(usuario->dir, (const char*) sqlite3_column_text(stmt, 9));
 
-}
+    }
 
- // Terminar statement
- sqlite3_finalize(stmt);
+    // Terminar statement
+    sqlite3_finalize(stmt);
 
     return usuario;
 }
 
-void guardarUsuario(sqlite3 *db, Usuario *usuario){
+void actualizarUsuario(Usuario *usuario){
     sqlite3_stmt *stmt;
     char *sql = "UPDATE USUARIO SET nombre = ?, apellidos = ?, fechaNac = ?, email = ?, telefono = ?, pregunta_seguridad = ?, respuesta_seguridad = ?, dir = ? WHERE dni = ? AND password = ?";
 
-    int rt = sqlite3_prepare_v2(db, sql, -1, &stmt, 0); //No devuelve filas, devuelve un estado, OK || ERROR
+    int rt = sqlite3_prepare_v2(dbHandler, sql, -1, &stmt, NULL); //No devuelve filas, devuelve un estado, OK || ERROR
     if(rt != SQLITE_OK) return;
 
     // Asignar valores a los parámetros `?`
@@ -91,11 +95,11 @@ void guardarUsuario(sqlite3 *db, Usuario *usuario){
     sqlite3_bind_text(stmt, 9, usuario->dni, -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 10, usuario->password, -1, SQLITE_STATIC);
 
-
+    
     // Ejecutarlo para actualizar los datos
     rt = sqlite3_step(stmt);
     if (rt != SQLITE_DONE) {     // comprobar que se ha hecho correctamente
-        printf("Error actualizando usuario: %s\n", sqlite3_errmsg(db));
+        printf("Error actualizando usuario: %s\n", sqlite3_errmsg(dbHandler));
     } 
 
     printf("Usuario actualizado correctamente.\n");
