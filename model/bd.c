@@ -2,6 +2,7 @@
 #include "bd.h"
 #include "sqlite3.h"
 #include "usuario.h"
+#include "cuenta.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -55,7 +56,6 @@ Usuario* cargarUsuario(const char *dni, const char *password){
         if(usuario == NULL) return NULL;
 
 
-    
     // Tomar los datos del usuario encontrado
     strcpy(usuario->dni, (const char*) sqlite3_column_text(stmt, 0));
     strcpy(usuario->nombre, (const char*) sqlite3_column_text(stmt, 1));
@@ -76,9 +76,20 @@ Usuario* cargarUsuario(const char *dni, const char *password){
     return usuario;
 }
 
-void actualizarUsuario(Usuario *usuario){
+// Si es 0 == Consulta es un insert
+// Si es 1 == Consulta es un update
+
+void guardarUsuario(Usuario *usuario, int decision){
     sqlite3_stmt *stmt;
-    char *sql = "UPDATE USUARIO SET nombre = ?, apellidos = ?, fechaNac = ?, email = ?, telefono = ?, pregunta_seguridad = ?, respuesta_seguridad = ?, dir = ? WHERE dni = ? AND password = ?";
+    char *sql;
+
+    if (decision == 1)
+    {
+        *sql = "UPDATE USUARIO SET nombre = ?, apellidos = ?, fechaNac = ?, email = ?, telefono = ?, pregunta_seguridad = ?, respuesta_seguridad = ?, dir = ? WHERE dni = ? AND password = ?";
+    }else{
+        *sql = "INSERT INTO USUARIO VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    }
+    
 
     int rt = sqlite3_prepare_v2(dbHandler, sql, -1, &stmt, NULL); //No devuelve filas, devuelve un estado, OK || ERROR
     if(rt != SQLITE_OK) return;
@@ -100,11 +111,60 @@ void actualizarUsuario(Usuario *usuario){
     rt = sqlite3_step(stmt);
     if (rt != SQLITE_DONE) {     // comprobar que se ha hecho correctamente
         printf("Error actualizando usuario: %s\n", sqlite3_errmsg(dbHandler));
-    } 
-
-    printf("Usuario actualizado correctamente.\n");
+    }else{
+        printf("Usuario actualizado correctamente.\n");
+    }
 
     // Liberar memoria del statement
     sqlite3_finalize(stmt);
 
+}
+
+// FUNCIONES CUENTA
+// FUNCIONES TARJETA
+
+// FUNCIONES ACCESO_US
+void guardarAccesoUsuario(Usuario *usuario, Cuenta *cuenta){
+    sqlite3_stmt *stmt;
+    char *sql = "INSERT INTO ACCESOUSCUENTA VALUES (?, ?, ?)";
+
+    int rt = sqlite3_prepare_v2(dbHandler, sql, -1, &stmt, NULL);
+    if(rt != SQLITE_OK) return;
+
+    sqlite3_bind_text(stmt, 1, usuario->dni, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, cuenta->numCuenta, -1, SQLITE_STATIC);
+
+    rt = sqlite3_step(stmt);
+    if (rt != SQLITE_DONE) {     // comprobar que se ha hecho correctamente
+        printf("Error actualizando usuario: %s\n", sqlite3_errmsg(dbHandler));
+    }else {
+        printf("Acceso guardado correctamente.\n");
+    }
+
+    // Liberar memoria del statement
+    sqlite3_finalize(stmt);
+}
+
+
+int cargarAccesoUsuario(Usuario *usuario, Cuenta *cuenta){
+    sqlite3_stmt *stmt;
+    char *sql = "SELECT * FROM ACCESOUSCUENTA WHERE dni = ? AND numCuenta = ?";
+
+    // Realizar la consulta
+    int rt = sqlite3_prepare_v2(dbHandler, sql, -1, &stmt, NULL);
+
+    // Asignar valores a los parámetros `?`
+    sqlite3_bind_text(stmt, 1, usuario->dni, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, cuenta->numCuenta, -1, SQLITE_STATIC);
+    
+    // Comprobar a ver si tiene acceso
+    // Si da 0, hay acceso, sino da 1.
+    if (sqlite3_step(stmt) == SQLITE_ROW){
+        sqlite3_finalize(stmt);
+        return 0;
+    }else{
+        printf("El usuario %s %s no tiene acceso a la cuenta.", usuario->nombre, usuario->apellidos);
+        sqlite3_finalize(stmt);
+        return 1;
+    }  
 }
