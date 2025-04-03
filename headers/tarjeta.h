@@ -1,3 +1,6 @@
+#ifndef TARJETA_H
+#define TARJETA_H
+
 typedef struct 
 {
     //numTarjeta,fechaExpiracion,ccv,pin,estado,numCuenta,dniPropietario
@@ -11,3 +14,5 @@ typedef struct
 
 
 }Tarjeta;
+
+#endif

@@ -4,6 +4,9 @@
 #include "tarjeta.h"
 #include "leerConsola.h"
 #include "cuenta.h"
+#include "bd.h"
+
+
 
 int contarLineas(FILE *file){
     int lineas = 0;
@@ -57,20 +60,22 @@ void leerUsuarios(){
         }
         
         
-
+        usuarioActual.valido = YES;
         strcpy(usuarioActual.dni, dni);
         strcpy(usuarioActual.nombre, nombre);
         strcpy(usuarioActual.apellidos, apellido);
         strcpy(usuarioActual.fechaNac, fecha_nac);
         strcpy(usuarioActual.email, email);
         strcpy(usuarioActual.telefono, tlfn);
-        strcpy(usuarioActual.password, password);
+        usuarioActual.password = atoi(password);
         strcpy(usuarioActual.pregunta_seguridad, pregunta_seguridad);
         strcpy(usuarioActual.respuesta_seguridad, respuesta_seguridad);
         strcpy(usuarioActual.dir, dir);
 
-        //printf("Dni: %s, Nombre: %s, Apellidos: %s, fechaNac: %s, Email: %s, Telefono: %s, Password: %s, Pregunta: %s, Respuesta: %s, Dir: %s\n",
+        //printf("Dni: %s, Nombre: %s, Apellidos: %s, fechaNac: %s, Email: %s, Telefono: %s, Password: %d, Pregunta: %s, Respuesta: %s, Dir: %s\n",
         //usuarioActual.dni, usuarioActual.nombre, usuarioActual.apellidos, usuarioActual.fechaNac, usuarioActual.email, usuarioActual.telefono, usuarioActual.password, usuarioActual.pregunta_seguridad, usuarioActual.respuesta_seguridad, usuarioActual.dir);
+        
+        //guardarUsuario(&usuarioActual);
     } 
 
     fclose(usuariosFile);
@@ -145,6 +150,7 @@ void leerAcceso(){
         char *numCuenta = strtok(NULL, "\n");
 
         printf("Dni: %s, numCuenta: %s\n", dni, numCuenta);
+        guardarAccesoUsuario(dni, numCuenta);
 
     }
     
@@ -229,6 +235,8 @@ void leerCuentas(){
 
         //printf("numCuenta: %s, Saldo: %d, Tipo: %d, FechaCreacion: %s, Estado: %d, DniTitular: %s\n",
         //cuentaActual.numCuenta, cuentaActual.saldo, cuentaActual.tipo, cuentaActual.fechaCreacion, cuentaActual.estado, cuentaActual.dniTitular);
+        
+        guardarCuenta(&cuentaActual);
     }
     
     

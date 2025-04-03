@@ -1,8 +1,9 @@
 #include "loginInterfaz.h"
 #include "leerData.h"
+#include "bd.h"
 
 int main(int argc, char **argv){
-    leerAcceso();
+    abrirBD();
     leerCuentas();
     mostrarLoginInterfaz();
 }

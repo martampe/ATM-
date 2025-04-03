@@ -1,3 +1,5 @@
+#ifndef TRANSACCION_H
+#define TRANSACCION_H
 
 typedef struct 
 {
@@ -13,3 +15,5 @@ typedef struct
     int tipo;
 
 }Transaccion;
+
+#endif
