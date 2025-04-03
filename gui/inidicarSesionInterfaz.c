@@ -25,7 +25,6 @@ void mostrarCuentas(Usuario *usuario){
 
     Cuenta *cuentaAct = cargarCuenta(usuario->cuentasDisp->cuentas[opcion]->numCuenta);
     printf("Cuenta bd: %s\n", cuentaAct->numCuenta);
-    usuario->cuentaActual = calloc(1, sizeof(Cuenta));
     usuario->cuentaActual = cuentaAct;
     printf("Cuenta actual: %s\n", usuario->cuentaActual->numCuenta);
     mostrarInicioInterfaz();

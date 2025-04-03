@@ -75,7 +75,7 @@ void leerUsuarios(){
         //printf("Dni: %s, Nombre: %s, Apellidos: %s, fechaNac: %s, Email: %s, Telefono: %s, Password: %d, Pregunta: %s, Respuesta: %s, Dir: %s\n",
         //usuarioActual.dni, usuarioActual.nombre, usuarioActual.apellidos, usuarioActual.fechaNac, usuarioActual.email, usuarioActual.telefono, usuarioActual.password, usuarioActual.pregunta_seguridad, usuarioActual.respuesta_seguridad, usuarioActual.dir);
         
-        //guardarUsuario(&usuarioActual);
+        guardarUsuario(&usuarioActual);
     } 
 
     fclose(usuariosFile);
