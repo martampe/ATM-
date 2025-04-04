@@ -3,12 +3,14 @@
 #include "leerConsola.h"
 #include <string.h>
 #include "sistem.h"
+#include "bd.h"
+#include "usuarioHandler.h"
 
 
 void mostrarTransaccionInterfaz(void){
 
     char bufferSeleccion[3];
-    char bufferISBN[20];
+    char bufferISBN[30];
     char bufferCantidad[10];
     int cantidad;
     int operacionCorrecta = -1;
@@ -35,17 +37,15 @@ void mostrarTransaccionInterfaz(void){
             printf("Introduce el ISBN destino: ");
             fgets(bufferISBN, sizeof(bufferISBN), stdin);
 
-            if (strchr(bufferISBN, '\n') != NULL)
-            {
-                bufferISBN[strcspn(bufferISBN, "\n")] = '\0';
-                //Comprobar ISB
-            } else {
+            int rt = eliminarSaltoLinea(bufferISBN);
+
+            if(rt != 0){
                 clearScreen();
                 printf("Error: Error al procesar el ISBN\n");
                 printf("Persiona enter para continuar...");
                 limpiarBuffer();
             }
-            
+
 
             printf("Introduce la cantidad a transferir: ");
             fgets(bufferCantidad, sizeof(bufferCantidad), stdin);
@@ -54,7 +54,7 @@ void mostrarTransaccionInterfaz(void){
             cantidad = leerInteger(bufferCantidad);
             if (cantidad > 0)
             {
-                operacionCorrecta = 0; //Implementar realizar transacion
+                operacionCorrecta = realizarTransferencia(getUsuarioActual()->cuentaActual->numCuenta, bufferISBN, cantidad);
                 clearScreen();
                 printf("Operacion realizada a ISBN: %s de %d\n", bufferISBN, cantidad);
                 printf("Persiona enter para continuar...");

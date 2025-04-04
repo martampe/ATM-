@@ -4,6 +4,6 @@
 int leerInteger(char *numero);
 
 void limpiarBuffer();
-void eliminarSaltoLinea(char *linea);
+int eliminarSaltoLinea(char *linea);
 
 #endif

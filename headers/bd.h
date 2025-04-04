@@ -13,4 +13,5 @@ void guardarAccesoUsuario(char *dni, char *numCuenta);
 void cargarAccesoUsuario(Usuario *usuario);
 Cuenta* cargarCuenta(const char *numCuenta);
 void guardarCuenta(Cuenta *cuenta);
+int realizarTransferencia(char *cuentaOrig, char *cuentaDest, double cantidad);
 #endif

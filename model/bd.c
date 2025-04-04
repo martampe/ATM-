@@ -320,3 +320,66 @@ void actualizarCuenta(Cuenta *cuenta) {
 
     sqlite3_finalize(stmt);
 }
+
+int realizarTransferencia(char *cuentaOrig, char *cuentaDest, double cantidad){
+
+    sqlite3_stmt *stmt;
+
+    Cuenta *dest = cargarCuenta(cuentaDest);
+
+    if (dest == NULL)
+    {
+        printf("Error al cargar la cuenta destino\n");
+        return 1;
+    }
+
+    double saldoFinalDest = dest->saldo + cantidad;
+
+    //Actualizar cuenta destino
+
+    char *sql = "UPDATE CUENTA SET saldo = ? WHERE numCuenta = ?;";
+    int rt = sqlite3_prepare(dbHandler, sql, -1, &stmt, NULL);
+    if (rt != SQLITE_OK)
+    {
+        printf("Error: Al preparar la consulta\n");
+        return -1;
+    }
+
+    sqlite3_bind_double(stmt, 1, saldoFinalDest);
+    sqlite3_bind_text(stmt, 2, cuentaDest, -1, SQLITE_STATIC);
+    
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
+        printf("Error: No se pudo actualizar la tabla durante la transaccion\n");
+    }
+
+    printf("Cuenta destino actualizada correctamente\n");
+
+    //Actualizar cuenta origen
+
+    Cuenta *origen = cargarCuenta(cuentaOrig);
+    double saldoFinalOrig = origen->saldo - cantidad;
+
+    sqlite3_reset(stmt);
+    sqlite3_clear_bindings(stmt);
+
+
+    sqlite3_bind_double(stmt, 1, saldoFinalOrig);
+    sqlite3_bind_text(stmt, 2, cuentaOrig, -1, SQLITE_STATIC);
+
+    
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
+        printf("Error: No se pudo actualizar la tabla durante la transaccion\n");
+        return -1;
+    }
+
+    printf("Cuenta origen actualizada correctamente\n");
+
+    sqlite3_finalize(stmt);
+
+    return 0;
+
+
+
+}

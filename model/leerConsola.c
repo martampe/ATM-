@@ -5,12 +5,14 @@
 #include <stdio.h>
 #include "leerConsola.h"
 
-void eliminarSaltoLinea(char *linea){
+int eliminarSaltoLinea(char *linea){
 
     if (strchr(linea, '\n') != NULL)
     {
         linea[strcspn(linea, "\n")] = '\0';
+        return 0;
     }
+    return 1;
     
 }
 
