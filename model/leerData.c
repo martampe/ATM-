@@ -5,6 +5,7 @@
 #include "leerConsola.h"
 #include "cuenta.h"
 #include "bd.h"
+#include "config.h"
 
 
 
@@ -23,7 +24,8 @@ int contarLineas(FILE *file){
 void leerUsuarios(){
     //10 usuarios
     //IMPORTANTE LIBERAR MEMORIA
-    FILE *usuariosFile = fopen("resources/data/Usuarios.csv", "r");
+    char *pathUsuarios = getPathUsuario();
+    FILE *usuariosFile = fopen(pathUsuarios, "r");
     if (usuariosFile == NULL)
     {
         printf("Error: al cargar el archivo de Usuarios\n");
@@ -84,7 +86,8 @@ void leerUsuarios(){
 }
 
 void leerTransacciones(){
-    FILE *transaccionesFile = fopen("resources/data/Transacciones.csv", "r");
+    char *pathTransaccion = getPathTransaccion();
+    FILE *transaccionesFile = fopen(pathTransaccion, "r");
     if (transaccionesFile == NULL)
     {
         printf("Error: al cargar el archivo de transacciones\n");
@@ -132,8 +135,9 @@ void leerTransacciones(){
 }
 
 void leerAcceso(){
+    char *pathAccesoCuenta = getPathAccesoCuenta();
 
-    FILE *accesoFile = fopen("resources/data/AccesoCuenta.csv", "r");
+    FILE *accesoFile = fopen(pathAccesoCuenta, "r");
     if (accesoFile == NULL)
     {
         printf("Error: al cargar el archivo de Acceso-Cuenta\n");
@@ -160,8 +164,8 @@ void leerAcceso(){
 
 void leerTarjetas(){
 
-    //numTarjeta,fechaExpiracion,ccv,pin,estado,numCuenta,dniPropietario
-    FILE *fileTarjeta = fopen("resources/data/Tarjeta.csv", "r");
+    char *pathTarjeta = getPathTarjeta();
+    FILE *fileTarjeta = fopen(pathTarjeta, "r");
 
     if (fileTarjeta == NULL)
     {
@@ -204,7 +208,9 @@ void leerTarjetas(){
 
 void leerCuentas(){
 
-    FILE *fileCuentas = fopen("resources/data/Cuenta.csv", "r");
+    char *pathCuentas = getPathCuenta();
+
+    FILE *fileCuentas = fopen(pathCuentas, "r");
 
     if (fileCuentas == NULL)
     {

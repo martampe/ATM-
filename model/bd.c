@@ -3,13 +3,15 @@
 #include "sqlite3.h"
 #include <string.h>
 #include <stdlib.h>
+#include "config.h"
 
 static sqlite3* dbHandler = NULL;
 
 // Abrir BD
 void abrirBD(){
+    char *pathBD = getPathBD();
     sqlite3 *db;
-    int comprobante = sqlite3_open("resources/bd/bd.db", &db); //ASEGURAR LA RUTA
+    int comprobante = sqlite3_open(pathBD, &db); //ASEGURAR LA RUTA
 
     if (comprobante != SQLITE_OK){ //Comprobar sqlite OK
         printf("No se ha podido abrir a BD.");  // estaria bien que saliese en formato error
