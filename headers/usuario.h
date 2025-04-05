@@ -1,6 +1,8 @@
 #ifndef USUARIO_H
 #define USUARIO_H
 
+#include "cuenta.h"
+#include "cuentasDisponibles.h"
 typedef enum{
     YES,
     NO
@@ -16,10 +18,13 @@ typedef struct
     char fechaNac[20];
     char email[50];
     char telefono[15];
-    char password[20];
+    int password;
     char pregunta_seguridad[100];
     char respuesta_seguridad[100];
     char dir [50];
+    CuentasDisponibles *cuentasDisp;
+    Cuenta *cuentaActual;
+
     
 }Usuario;
 

@@ -4,7 +4,7 @@
 typedef struct 
 {
     char numCuenta[25];
-    int saldo;
+    double saldo;
     int tipo;
     char fechaCreacion[11];
     int estado;

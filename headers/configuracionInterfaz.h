@@ -1,6 +1,5 @@
-#ifndef CONFIGURACIONINTERFAZ_H
-#define CONFIGURACIONINTERFAZ_H
-
+#ifndef CONFIGURACION_INTERFAZ_H
+#define CONFIGURACION_INTERFAZ_H
 void mostrarConfiguracionInterfaz(void);
 
 #endif

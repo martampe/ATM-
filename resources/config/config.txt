@@ -1,0 +1,6 @@
+pathAccesoCuenta=resources/data/AccesoCuenta.csv
+pathCuenta=resources/data/Cuenta.csv
+pathTarjeta=resources/data/Tarjeta.csv
+pathTransaccion=resources/data/Transacciones.csv
+pathUsuario=resources/data/Usuarios.csv
+pathBD=resources/bd/bd.db

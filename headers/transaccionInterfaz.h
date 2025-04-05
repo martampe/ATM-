@@ -1,6 +1,5 @@
-#ifndef TRANSACCIONINTERFAZ_H
-#define TRANSACCIONINTERFAZ_H
-
+#ifndef TRANSACCION_INTERFAZ_H
+#define TRANSACCION_INTERFAZ_H
 void mostrarTransaccionInterfaz(void);
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef HISTORIALINTERFAZ_H
-#define HISTORIALINTERFAZ_H
+#ifndef HISTORIAL_INTERFAZ_H
+#define HISTORIAL_INTERFAZ_H
 
 void mostrarHistorialInterfaz(void);
 

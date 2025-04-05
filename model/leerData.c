@@ -5,6 +5,7 @@
 #include "leerConsola.h"
 #include "cuenta.h"
 #include "bd.h"
+#include "config.h"
 
 int contarLineas(FILE *file){
     int lineas = 0;
@@ -21,7 +22,8 @@ int contarLineas(FILE *file){
 void leerUsuarios(){
     //10 usuarios
     //IMPORTANTE LIBERAR MEMORIA
-    FILE *usuariosFile = fopen("resources/data/Usuarios.csv", "r");
+    char *pathUsuarios = getPathUsuario();
+    FILE *usuariosFile = fopen(pathUsuarios, "r");
     if (usuariosFile == NULL)
     {
         printf("Error: al cargar el archivo de Usuarios\n");
@@ -65,14 +67,15 @@ void leerUsuarios(){
         strcpy(usuarioActual.fechaNac, fecha_nac);
         strcpy(usuarioActual.email, email);
         strcpy(usuarioActual.telefono, tlfn);
-        strcpy(usuarioActual.password, password);
+        usuarioActual.password = atoi(password);
         strcpy(usuarioActual.pregunta_seguridad, pregunta_seguridad);
         strcpy(usuarioActual.respuesta_seguridad, respuesta_seguridad);
         strcpy(usuarioActual.dir, dir);
 
-        //printf("Dni: %s, Nombre: %s, Apellidos: %s, fechaNac: %s, Email: %s, Telefono: %s, Password: %s, Pregunta: %s, Respuesta: %s, Dir: %s\n",
+        //printf("Dni: %s, Nombre: %s, Apellidos: %s, fechaNac: %s, Email: %s, Telefono: %s, Password: %d, Pregunta: %s, Respuesta: %s, Dir: %s\n",
         //usuarioActual.dni, usuarioActual.nombre, usuarioActual.apellidos, usuarioActual.fechaNac, usuarioActual.email, usuarioActual.telefono, usuarioActual.password, usuarioActual.pregunta_seguridad, usuarioActual.respuesta_seguridad, usuarioActual.dir);
-        guardarUsuario(&usuarioActual, 0);
+        
+        guardarUsuario(&usuarioActual);
     } 
 
     fclose(usuariosFile);
@@ -81,7 +84,8 @@ void leerUsuarios(){
 }
 
 void leerTransacciones(){
-    FILE *transaccionesFile = fopen("resources/data/Transacciones.csv", "r");
+    char *pathTransaccion = getPathTransaccion();
+    FILE *transaccionesFile = fopen(pathTransaccion, "r");
     if (transaccionesFile == NULL)
     {
         printf("Error: al cargar el archivo de transacciones\n");
@@ -129,8 +133,9 @@ void leerTransacciones(){
 }
 
 void leerAcceso(){
+    char *pathAccesoCuenta = getPathAccesoCuenta();
 
-    FILE *accesoFile = fopen("resources/data/AccesoCuenta.csv", "r");
+    FILE *accesoFile = fopen(pathAccesoCuenta, "r");
     if (accesoFile == NULL)
     {
         printf("Error: al cargar el archivo de Acceso-Cuenta\n");
@@ -147,6 +152,7 @@ void leerAcceso(){
         char *numCuenta = strtok(NULL, "\n");
 
         printf("Dni: %s, numCuenta: %s\n", dni, numCuenta);
+        guardarAccesoUsuario(dni, numCuenta);
 
     }
     
@@ -156,8 +162,8 @@ void leerAcceso(){
 
 void leerTarjetas(){
 
-    //numTarjeta,fechaExpiracion,ccv,pin,estado,numCuenta,dniPropietario
-    FILE *fileTarjeta = fopen("resources/data/Tarjeta.csv", "r");
+    char *pathTarjeta = getPathTarjeta();
+    FILE *fileTarjeta = fopen(pathTarjeta, "r");
 
     if (fileTarjeta == NULL)
     {
@@ -200,7 +206,9 @@ void leerTarjetas(){
 
 void leerCuentas(){
 
-    FILE *fileCuentas = fopen("resources/data/Cuenta.csv", "r");
+    char *pathCuentas = getPathCuenta();
+
+    FILE *fileCuentas = fopen(pathCuentas, "r");
 
     if (fileCuentas == NULL)
     {
@@ -231,6 +239,8 @@ void leerCuentas(){
 
         //printf("numCuenta: %s, Saldo: %d, Tipo: %d, FechaCreacion: %s, Estado: %d, DniTitular: %s\n",
         //cuentaActual.numCuenta, cuentaActual.saldo, cuentaActual.tipo, cuentaActual.fechaCreacion, cuentaActual.estado, cuentaActual.dniTitular);
+        
+        guardarCuenta(&cuentaActual);
     }
     
     

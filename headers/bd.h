@@ -3,11 +3,16 @@
 
 #include "usuario.h"
 #include "cuenta.h"
+#include "cuentasDisponibles.h"
 
 void abrirBD();
-Usuario* cargarUsuario(const char *dni, const char *password);
-void guardarUsuario(Usuario *usuario, int decision);
-void guardarAccesoUsuario(Usuario *usuario, Cuenta *cuenta);
-int cargarAccesoUsuario(Usuario *usuario, Cuenta *cuenta);
+Usuario* cargarUsuario(const char *dni, int password);
+void guardarUsuario(Usuario *usuario);
+void actualizarUsuario(Usuario *usuario);
+void guardarAccesoUsuario(char *dni, char *numCuenta);
+void cargarAccesoUsuario(Usuario *usuario);
+Cuenta* cargarCuenta(const char *numCuenta);
+void guardarCuenta(Cuenta *cuenta);
+int realizarTransferencia(char *cuentaOrig, char *cuentaDest, double cantidad);
 
 #endif

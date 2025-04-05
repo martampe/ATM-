@@ -1,6 +1,6 @@
-// View: Inicio y registro + Cambio de contraseña)
-#ifndef LOGININTERFAZ_H
-#define LOGININTERFAZ_H
+#ifndef LOGIN_INTERFAZ_H
+#define LOGIN_INTERFAZ_H
+
 
 void mostrarLoginInterfaz(void);
 

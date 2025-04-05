@@ -1,5 +1,6 @@
-#ifndef LEERDATA_H
-#define LEERDATA_H
+#ifndef LEER_DATA_H
+#define LEER_DATA_H
+
 
 #include "usuario.h"
 #include <stdio.h>

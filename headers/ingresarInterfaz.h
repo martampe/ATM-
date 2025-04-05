@@ -1,5 +1,5 @@
-#ifndef INGRESARINTERFAZ_H
-#define INGRESARINTERFAZ_H
+#ifndef INGRESAR_INTERFAZ_H
+#define INGRESAR_INTERFAZ_H
 
 void mostrarIngresarInterfaz(void);
 

@@ -1,7 +1,10 @@
-#ifndef LEERCONSOLA_H
-#define LEERCONSOLA_H
+#ifndef LEER_CONSOLA_H
+#define LEER_CONSOLA_H
 
-int leerInteger(char *numero);
+//int leerInteger(char *numero);
+//void limpiarBuffer();
+
 void limpiarBuffer();
+int eliminarSaltoLinea(char *linea);
 
 #endif

@@ -1,3 +1,6 @@
+#ifndef SISTEMA_H
+#define SISTEMA_H
+
 #ifdef __linux__
     #define SO "Linux"
     #define CLEAR_COMMAND "clear"
@@ -7,3 +10,5 @@
 #endif
 
 void clearScreen();
+
+#endif
