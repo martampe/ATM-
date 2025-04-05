@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "config.h"
+#include <tarjeta.h>
 
 static sqlite3* dbHandler = NULL;
 
@@ -382,4 +383,63 @@ int realizarTransferencia(char *cuentaOrig, char *cuentaDest, double cantidad){
 
 
 
+}
+
+void guardarTarjeta(Tarjeta *tarjeta){
+    if (tarjeta == NULL) return;
+
+    sqlite3_stmt *stmt;
+    const char *sql = "INSERT INTO TARJETA VALUES (?, ?, ?, ?, ?, ?, ?);";
+
+    int rt = sqlite3_prepare_v2(dbHandler, sql, -1, &stmt, 0);
+    if (rt != SQLITE_OK) {
+        printf("Error preparando guardarTarjeta: %s\n", sqlite3_errmsg(dbHandler));
+        return;
+    }
+
+    sqlite3_bind_text(stmt, 1, tarjeta->numTarjeta, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, tarjeta->fechaExpiracion, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 3, tarjeta->ccv);
+    sqlite3_bind_int(stmt, 4, tarjeta->pin);
+    sqlite3_bind_int(stmt, 5, tarjeta->estado);
+    sqlite3_bind_text(stmt, 6, tarjeta->numCuenta, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 7, tarjeta->dniPropietario, -1, SQLITE_STATIC);
+
+    rt = sqlite3_step(stmt);
+    if (rt != SQLITE_DONE) {
+        printf("Error insertando tarjeta: %s\n", sqlite3_errmsg(dbHandler));
+    } else {
+        printf("Tarjeta insertada correctamente.\n");
+    }
+
+    sqlite3_finalize(stmt);
+}
+
+
+Tarjeta* cargarTarjeta(const char *numTarjeta){
+    sqlite3_stmt *stmt;
+    const char *sql = "SELECT * FROM TARJETA WHERE numTarjeta = ?;";
+
+    int rt = sqlite3_prepare_v2(dbHandler, sql, -1, &stmt, 0);
+    if (rt != SQLITE_OK) {
+        printf("Error preparando cargarTarjeta: %s\n", sqlite3_errmsg(dbHandler));
+        return NULL;
+    }
+
+    sqlite3_bind_text(stmt, 1, numTarjeta, -1, SQLITE_STATIC);
+
+    Tarjeta *tarjeta = NULL;
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        tarjeta = (Tarjeta*)malloc(sizeof(Tarjeta));
+        strcpy(tarjeta->numTarjeta, (const char*)sqlite3_column_text(stmt, 0));
+        strcpy(tarjeta->fechaExpiracion, (const char*)sqlite3_column_text(stmt, 1));
+        tarjeta->ccv = sqlite3_column_int(stmt, 2);
+        tarjeta->pin = sqlite3_column_int(stmt, 3);
+        tarjeta->estado = sqlite3_column_int(stmt, 4);
+        strcpy(tarjeta->numCuenta, (const char*)sqlite3_column_text(stmt, 5));
+        strcpy(tarjeta->dniPropietario, (const char*)sqlite3_column_text(stmt, 6));
+    }
+
+    sqlite3_finalize(stmt);
+    return tarjeta;
 }
