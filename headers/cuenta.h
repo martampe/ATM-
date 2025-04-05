@@ -1,3 +1,6 @@
+#ifndef CUENTA_H
+#define CUENTA_H
+
 typedef struct 
 {
     char numCuenta[25];
@@ -8,3 +11,5 @@ typedef struct
     char dniTitular[10];
 
 }Cuenta;
+
+#endif

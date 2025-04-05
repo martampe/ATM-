@@ -1,12 +1,15 @@
+#ifndef USUARIO_H
+#define USUARIO_H
+
 typedef enum{
     YES,
     NO
-}VALIDO;
+} VALIDO;
 
 typedef struct 
 {
     //dni, nombre, apellido, fecha_nac, email, tlfno, password, pregunta_seguridad, respuesta_seguridad, dir
-    VALIDO usuarioValido;
+    VALIDO valido;
     char dni[10];
     char nombre [20];
     char apellidos [40];
@@ -19,3 +22,5 @@ typedef struct
     char dir [50];
     
 }Usuario;
+
+#endif

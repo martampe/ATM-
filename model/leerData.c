@@ -4,6 +4,7 @@
 #include "tarjeta.h"
 #include "leerConsola.h"
 #include "cuenta.h"
+#include "bd.h"
 
 int contarLineas(FILE *file){
     int lineas = 0;
@@ -57,7 +58,7 @@ void leerUsuarios(){
         }
         
         
-
+        usuarioActual.valido = YES;
         strcpy(usuarioActual.dni, dni);
         strcpy(usuarioActual.nombre, nombre);
         strcpy(usuarioActual.apellidos, apellido);
@@ -71,6 +72,7 @@ void leerUsuarios(){
 
         //printf("Dni: %s, Nombre: %s, Apellidos: %s, fechaNac: %s, Email: %s, Telefono: %s, Password: %s, Pregunta: %s, Respuesta: %s, Dir: %s\n",
         //usuarioActual.dni, usuarioActual.nombre, usuarioActual.apellidos, usuarioActual.fechaNac, usuarioActual.email, usuarioActual.telefono, usuarioActual.password, usuarioActual.pregunta_seguridad, usuarioActual.respuesta_seguridad, usuarioActual.dir);
+        guardarUsuario(&usuarioActual, 0);
     } 
 
     fclose(usuariosFile);

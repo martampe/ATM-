@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include "bd.h"
 #include "sqlite3.h"
-#include "usuario.h"
-#include "cuenta.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -22,6 +20,7 @@ void abrirBD(){
 
 }
 
+// 
 Usuario* cargarUsuario(const char *dni, const char *password){
    // FALTA LIBERAR MEMORIA AAAAAAAAAAAAAAAAAAAAAAAHHHHHHHH
     
@@ -45,7 +44,7 @@ Usuario* cargarUsuario(const char *dni, const char *password){
     sqlite3_bind_text(stmt, 2, password, -1, SQLITE_STATIC);
 
 
-    Usuario *usuario = NULL;
+    Usuario *usuario;
 
     // Buscar el usuario ejecutando la consulta (Dios mio donde nos hemos metido)
     if (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -85,9 +84,9 @@ void guardarUsuario(Usuario *usuario, int decision){
 
     if (decision == 1)
     {
-        *sql = "UPDATE USUARIO SET nombre = ?, apellidos = ?, fechaNac = ?, email = ?, telefono = ?, pregunta_seguridad = ?, respuesta_seguridad = ?, dir = ? WHERE dni = ? AND password = ?";
+        sql = "UPDATE USUARIO SET nombre = ?, apellidos = ?, fechaNac = ?, email = ?, telefono = ?, pregunta_seguridad = ?, respuesta_seguridad = ?, dir = ? WHERE dni = ? AND password = ?";
     }else{
-        *sql = "INSERT INTO USUARIO VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        sql = "INSERT INTO USUARIO VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     }
     
 

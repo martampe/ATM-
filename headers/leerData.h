@@ -1,3 +1,6 @@
+#ifndef LEERDATA_H
+#define LEERDATA_H
+
 #include "usuario.h"
 #include <stdio.h>
 #include "transaccion.h"
@@ -9,3 +12,5 @@ void leerTransacciones();
 void leerAcceso();
 void leerTarjetas();
 void leerCuentas();
+
+#endif
