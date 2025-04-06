@@ -8,5 +8,7 @@ int main(int argc, char **argv){
     leerUsuarios();
     leerAcceso();
     leerCuentas();
+    leerTarjetas();
+    leerTransacciones();
     mostrarLoginInterfaz();
 }

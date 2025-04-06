@@ -124,6 +124,7 @@ void leerTransacciones(){
         //printf("Id: %d, Origen: %s, Tarjeta: %s, Destino: %s, Cantidad: %d, Fecha: %s, Dir: %s, Estado: %d, Tipo: %d\n",
         //transaccionActual.id, transaccionActual.numCuentaOrigen, transaccionActual.numeroTarjetaOrigen, transaccionActual.numCuentaDestino,transaccionActual.cantidad, transaccionActual.fecha, transaccionActual.dirATM, transaccionActual.estado, transaccionActual.tipo);
         
+        guardarTransaccion(&transaccionActual);
 
     }
 
@@ -197,7 +198,7 @@ void leerTarjetas(){
         //printf("Tarjeta: %s, Expiracion: %s, CCV: %d, Pin: %d, Estado: %d, Cuenta: %s, dniProp: %s\n",
         //tarjetaActual.numTarjeta, tarjetaActual.fechaExpiracion, tarjetaActual.ccv, tarjetaActual.pin, tarjetaActual.estado, tarjetaActual.numCuenta, tarjetaActual.dniPropietario);
 
-
+        guardarTarjeta(&tarjetaActual);
     }
     
     
