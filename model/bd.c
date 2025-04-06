@@ -486,3 +486,82 @@ void guardarTransaccion(Transaccion *transaccion){
 
     sqlite3_finalize(stmt);
 }
+
+// Función para ingresar dinero
+int ingresarDinero(const char* numCuenta, double cantidad) {
+    if (dbHandler == NULL) {
+        printf("Error: No hay conexión a la base de datos.\n");
+        return -1;
+    }
+
+    if (cantidad <= 0) {
+        printf("Cantidad inválida.\n");
+        return -1;
+    }
+
+    char sql[256];
+    snprintf(sql, sizeof(sql),
+             "UPDATE Cuenta SET saldo = saldo + %.2f WHERE numCuenta = '%s';",
+             cantidad, numCuenta);
+
+    if (sqlite3_exec(dbHandler, sql, 0, 0, 0) != SQLITE_OK) {
+        printf("Error al ingresar dinero: %s\n", sqlite3_errmsg(dbHandler));
+        return -1;
+    }
+
+    printf("Dinero ingresado correctamente.\n");
+    return 0;
+}
+
+// Función para retirar dinero
+int retirarDinero(const char* numCuenta, double cantidad) {
+    if (dbHandler == NULL) {
+        printf("Error: No hay conexión a la base de datos.\n");
+        return -1;
+    }
+
+    if (cantidad <= 0) {
+        printf("Cantidad inválida.\n");
+        return -1;
+    }
+
+    // Primero verificar si tiene saldo suficiente
+    char sqlSelect[256];
+    snprintf(sqlSelect, sizeof(sqlSelect),
+             "SELECT saldo FROM Cuenta WHERE numCuenta = '%s';",
+             numCuenta);
+
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(dbHandler, sqlSelect, -1, &stmt, NULL) != SQLITE_OK) {
+        printf("Error al consultar saldo: %s\n", sqlite3_errmsg(dbHandler));
+        return -1;
+    }
+
+    double saldoActual = 0;
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        saldoActual = sqlite3_column_double(stmt, 0);
+    } else {
+        printf("Cuenta no encontrada.\n");
+        sqlite3_finalize(stmt);
+        return -1;
+    }
+    sqlite3_finalize(stmt);
+
+    if (saldoActual < cantidad) {
+        printf("Saldo insuficiente. Tienes: %.2f\n", saldoActual);
+        return -1;
+    }
+
+    char sqlUpdate[256];
+    snprintf(sqlUpdate, sizeof(sqlUpdate),
+             "UPDATE Cuenta SET saldo = saldo - %.2f WHERE numCuenta = '%s';",
+             cantidad, numCuenta);
+
+    if (sqlite3_exec(dbHandler, sqlUpdate, 0, 0, 0) != SQLITE_OK) {
+        printf("Error al retirar dinero: %s\n", sqlite3_errmsg(dbHandler));
+        return -1;
+    }
+
+    printf("Dinero retirado correctamente.\n");
+    return 0;
+}
