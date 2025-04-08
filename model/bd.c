@@ -678,3 +678,37 @@ int retirarDinero(const char* numCuenta, double cantidad) {
     printf("Dinero retirado correctamente.\n");
     return 0;
 }
+
+int registrarUsuario(Usuario usuario) {
+
+    sqlite3 *db;
+    sqlite3_stmt *stmt;
+    const char *sql = "INSERT INTO Usuario (dni, nombre, apellidos, fechaNac, email, tlf, password, preguntaRec, respuestaRec, dir) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    int rc;
+
+    // Asignar los valores a la sentencia preparada
+    sqlite3_bind_text(stmt, 1, usuario.dni, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, usuario.nombre, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, usuario.apellidos, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 4, usuario.fechaNac, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 5, usuario.email, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 6, usuario.telefono, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 7, usuario.password, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 8, usuario.pregunta_seguridad, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 9, usuario.respuesta_seguridad, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 10, usuario.dir, -1, SQLITE_STATIC);
+
+    // Ejecutar 
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        printf("Error al ejecutar la sentencia SQL: %s\n", sqlite3_errmsg(db));
+        sqlite3_finalize(stmt);
+        return rc; 
+    }
+
+    sqlite3_finalize(stmt);
+    sqlite3_close(db);
+
+    printf("Usuario registrado exitosamente.\n");
+    return SQLITE_OK; 
+    }
