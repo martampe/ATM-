@@ -15,8 +15,8 @@ void cargarAccesoUsuario(Usuario *usuario);
 Cuenta* cargarCuenta(const char *numCuenta);
 void guardarCuenta(Cuenta *cuenta);
 int realizarTransferencia(char *cuentaOrig, char *cuentaDest, double cantidad);
-void actualizarCuenta(Cuenta *cuenta);
-void guardarTarjeta(Tarjeta *tarjeta);
+int actualizarCuenta(Cuenta *cuenta);
+int guardarTarjeta(Tarjeta *tarjeta);
 Tarjeta *cargarTarjeta(const char *numTarjeta);
-void guardarTransaccion(Transaccion *transaccion);
+int guardarTransaccion(Transaccion *transaccion);
 #endif
