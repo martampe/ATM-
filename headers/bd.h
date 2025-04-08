@@ -1,6 +1,7 @@
 #ifndef BD_H
 #define BD_H
 
+#include "transaccion.h"
 #include "usuario.h"
 #include "cuenta.h"
 #include "cuentasDisponibles.h"
@@ -13,6 +14,9 @@ void guardarAccesoUsuario(char *dni, char *numCuenta);
 void cargarAccesoUsuario(Usuario *usuario);
 Cuenta* cargarCuenta(const char *numCuenta);
 void guardarCuenta(Cuenta *cuenta);
+int contarTransaccionesCuenta(char* numCuenta);
+void mostrarTransaccionesCuenta(char* numCuenta);
 int realizarTransferencia(char *cuentaOrig, char *cuentaDest, double cantidad);
+
 
 #endif

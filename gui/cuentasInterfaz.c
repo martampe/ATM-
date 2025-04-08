@@ -9,7 +9,7 @@ void mostrarDetallesCuentaInterfaz(int cuenta){
     do{
         clearScreen();
         printf("Detalles de Cuenta <<%d>>\n", cuenta);
-        //printear transacciones
+        //printear transacciones  
         printf("[0] Volver al a tus cuentas\n"
             "Introduzca operacion: ");
 

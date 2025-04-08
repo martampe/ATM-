@@ -32,7 +32,7 @@ void mostrarTransaccionInterfaz(void){
         {
         case 1:
             clearScreen();
-            printf("Realizando ransaccion\n");
+            printf("Realizando transaccion\n");
 
             printf("Introduce el ISBN destino: ");
             fgets(bufferISBN, sizeof(bufferISBN), stdin);
@@ -56,8 +56,8 @@ void mostrarTransaccionInterfaz(void){
             {
                 operacionCorrecta = realizarTransferencia(getUsuarioActual()->cuentaActual->numCuenta, bufferISBN, cantidad);
                 clearScreen();
-                printf("Operacion realizada a ISBN: %s de %d\n", bufferISBN, cantidad);
-                printf("Persiona enter para continuar...");
+                printf("Operacion realizada a ISBN: %s de %d euros\n", bufferISBN, cantidad);
+                printf("Presiona enter para continuar...");
                 limpiarBuffer();
             } else {
                 clearScreen();
