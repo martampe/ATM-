@@ -5,36 +5,30 @@
 
 static FILE *config = NULL;
 static char *pathConfig = "resources/config/config.txt";
-static char pathAccesoCuenta[30];
-static char pathCuenta[30];
-static char pathTarjeta[30];
-static char pathTransaccion[30];
-static char pathUsuario[30];
-static char pathBD[30];
+static char pathAccesoCuenta[100];
+static char pathCuenta[100];
+static char pathTarjeta[100];
+static char pathTransaccion[100];
+static char pathUsuario[100];
+static char pathBD[100];
 
 
-char *getConfig(char *atributo){
-
+char *getConfig(char *atributo) {
+    static char valorGuardado[100]; // Buffer estático que persiste entre llamadas
+    rewind(config); // Reinicia la posición del archivo al principio
+    
     char linea[100];
-
-    while ((fgets(linea, sizeof(linea), config)) != NULL)
-    {
+    while ((fgets(linea, sizeof(linea), config)) != NULL) {
         char *atributoEcontrado = strtok(linea, "=");
         char *valor = strtok(NULL, "\n");
-
-        if (strcmp(atributoEcontrado, atributo) == 0)
-        {
-            printf("Atributo encontrado, valor: %s\n", valor);
-            return valor;
+        if (strcmp(atributoEcontrado, atributo) == 0) {
+            strcpy(valorGuardado, valor); // Copia a buffer seguro
+            printf("Atributo encontrado, valor: %s\n", valorGuardado);
+            return valorGuardado;
         }
-        
     }
-
     printf("Error: Atributo de configuracion %s, no encontrado\n", atributo);
-
     return NULL;
-
-
 }
 
 
@@ -55,6 +49,8 @@ void cargarPathFicheros(){
     strcpy(pathTransaccion, getConfig("pathTransaccion"));
     strcpy(pathUsuario, getConfig("pathUsuario"));
     strcpy(pathBD, getConfig("pathBD"));
+
+    printf("Transacciones config: %s", pathTransaccion);
 
 
     fclose(fileConfig);
