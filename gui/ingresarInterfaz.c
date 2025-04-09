@@ -42,7 +42,7 @@ void mostrarIngresarInterfaz(void){
                 {
                     case 1:
                         clearScreen();
-                        operacionCorrecta = ingresarDinero(getUsuarioActual()->numCuentaActual, cantidad);
+                        operacionCorrecta = ingresarDinero(getUsuarioActual()->cuentaActual.numCuenta, cantidad);
 
                         if (operacionCorrecta != 0)
                         {

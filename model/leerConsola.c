@@ -40,6 +40,7 @@ int leerEntradaSegura(char *buffer, size_t tamanio) {
         printf("Error al leer por consola\n");
         printf("Presiona enter para continuar...");
         limpiarBuffer();
+        return 0;
     }
     
     return 1; // Lectura correcta

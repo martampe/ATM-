@@ -2,14 +2,24 @@
 #include <stdio.h>
 #include "leerConsola.h"
 #include "sistem.h"
+#include "usuarioHandler.h"
+#include "bd.h"
+#include "cuenta.h"
 
-void mostrarDetallesCuentaInterfaz(int cuenta){
+void mostrarDetallesCuentaInterfaz(char *cuenta){
     char buffer[3];
     int seleccion;
     do{
         clearScreen();
-        printf("Detalles de Cuenta <<%d>>\n", cuenta);
-        //printear transacciones  
+        printf("Detalles de Cuenta <<%s>>\n", cuenta);
+        Cuenta *cuentaSelecionada = cargarCuenta((const char*) cuenta);
+        printf("Numero de cuenta      saldo     tarjetas\n");
+        printf("%s    %.2f    %s", cuentaSelecionada->numCuenta, cuentaSelecionada->saldo, cuentaSelecionada->numTarjetasDisp != 0 ? cuentaSelecionada->tarjetasDisp[0].numTarjeta : "");
+        for (int i = 1; i < cuentaSelecionada->numTarjetasDisp; i++)
+        {
+            printf("                                     %s", cuentaSelecionada->tarjetasDisp[i].numTarjeta);
+        }
+        
         printf("[0] Volver al a tus cuentas\n"
             "Introduzca operacion: ");
 
@@ -37,7 +47,11 @@ void mostrarCuentasInterfaz(void){
     do{
         clearScreen();
         printf("Cuentas\n");
-        //printear cuentas
+        for (int i = 0; i < getUsuarioActual()->numCuentasDisp; i++)
+        {
+            printf("[%d] %s\n", i + 1, getUsuarioActual()->cuentasDisp[i].numCuenta);
+        }
+        
         printf("[0] Volver al menu principal\n"
             "Introduzca la cuenta ('0' para cancelar): ");
 
@@ -48,9 +62,9 @@ void mostrarCuentasInterfaz(void){
         {
             printf("Seleccionado volver al menu principal\n");
             return;
-        } else if(seleccion > 0){
+        } else if(seleccion > 0 && seleccion <= getUsuarioActual()->numCuentasDisp){
             printf("Seleccionado ver cuenta %d\n", seleccion);
-            mostrarDetallesCuentaInterfaz(seleccion); //pasar id de la cuenta
+            mostrarDetallesCuentaInterfaz(getUsuarioActual()->cuentasDisp[seleccion].numCuenta); //pasar id de la cuenta
         } else {
             clearScreen();
             printf("Opcion no valida. Intentelo de nuevo\n");

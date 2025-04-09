@@ -39,7 +39,7 @@ void mostrarTransaccionInterfaz(void){
             do
             {
                 printf("Introduce el ISBN destino: ");
-            } while ((leerEntradaSegura(bufferISBN, sizeof(bufferISBN))) != 0);
+            } while ((leerEntradaSegura(bufferISBN, sizeof(bufferISBN))) != 1);
             
 
             
@@ -49,7 +49,7 @@ void mostrarTransaccionInterfaz(void){
             cantidad = leerInteger(bufferCantidad);
             if (cantidad > 0)
             {
-                operacionCorrecta = realizarTransferencia(getUsuarioActual()->numCuentaActual, bufferISBN, cantidad);
+                operacionCorrecta = realizarTransferencia(getUsuarioActual()->cuentaActual.numCuenta, bufferISBN, cantidad);
                 clearScreen();
                 printf("Operacion realizada a ISBN: %s de %d euros\n", bufferISBN, cantidad);
                 printf("Presiona enter para continuar...");

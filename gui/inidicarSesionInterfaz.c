@@ -14,10 +14,9 @@ void mostrarCuentas(Usuario *usuario){
 
     printf("Seleccione una cuenta:\n");
 
-    int numCuentas = usuario->cuentasDisp->numCuentas;
-    for (int i = 0; i < numCuentas; i++)
+    for (int i = 0; i < usuario->numCuentasDisp; i++)
     {
-        printf("[%d] %s\n", i, usuario->cuentasDisp->cuentas[i]);
+        printf("[%d] %s\n", i, usuario->cuentasDisp[i].numCuenta);
     }
 
     printf("Seleccione una cuenta: ");
@@ -25,8 +24,8 @@ void mostrarCuentas(Usuario *usuario){
     fgets(bufferOpcion, sizeof(bufferOpcion), stdin);  
     int opcion = leerInteger(bufferOpcion);
 
-    strcpy(usuario->numCuentaActual, usuario->cuentasDisp->cuentas[opcion]);
-    printf("Cuenta actual: %s\n", usuario->numCuentaActual);
+    usuario->cuentaActual = usuario->cuentasDisp[opcion];
+    printf("Cuenta actual: %s\n", usuario->cuentaActual.numCuenta);
     mostrarInicioInterfaz();
 
 }
@@ -47,10 +46,9 @@ int iniciarSesion(){
     int contrasena = leerInteger(bufferContrasena);
 
     //buscar usuario
-    int numCuentas = 0;
-    char **cuentas = cargarUsuario(bufferDni, contrasena, &numCuentas);
+    Usuario *usuario = cargarUsuario(bufferDni, contrasena);
     
-    if (!cuentas) //si no valido, mostrar y liberar memoria
+    if (!usuario) //si no valido, mostrar y liberar memoria
     {
         clearScreen();
         printf("Usuario o contraseña incorrecta. Intentelo de nuevo.\n");
@@ -59,15 +57,12 @@ int iniciarSesion(){
         return 1;
 
     }
-    Usuario *usuarioActual = calloc(1, sizeof(Usuario));
-    usuarioActual->cuentasDisp = calloc(1, sizeof(CuentasDisponibles));
-    usuarioActual->cuentasDisp->cuentas = cuentas;
-    usuarioActual->cuentasDisp->numCuentas = numCuentas;
+
 
     //set usuario actual y mostrar cuentas
-    setUsuarioActual(usuarioActual);
+    setUsuarioActual(usuario);
 
-    mostrarCuentas(usuarioActual);
+    mostrarCuentas(usuario);
     
 }
 

@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "bd.h"
-#include "sqlite3.h"
 #include <string.h>
 #include <stdlib.h>
 #include "config.h"
@@ -64,83 +63,159 @@ void cargarAccesoUsuario(Usuario *usuario){
     
 */
 
-char** cargarUsuario(const char *dni, int password, int *numCuentas){
-   // FALTA LIBERAR MEMORIA AAAAAAAAAAAAAAAAAAAAAAAHHHHHHHH
+int contarTarjetas(const char *numCuenta) {
+    sqlite3_stmt *countStmt;
+    int count = 0;
     
-    // Crear el statement + La consulta
-    sqlite3_stmt *stmt = NULL;
-    char **cuentas = NULL;
-    *numCuentas = 0;
-    int capacidad = 4; // Empezamos con capacidad inicial
-    char *sql = "SELECT numCuenta FROM Usuario u, AccesoUsCuenta a WHERE u.dni = ? AND u.password = ? and u.dni = a.dni;";
+    char *sql = "SELECT COUNT(*) FROM Tarjeta WHERE numCuenta = ?;";
+    if (sqlite3_prepare_v2(dbHandler, sql, -1, &countStmt, NULL) != SQLITE_OK) {
+        return -1;
+    }
+    
+    sqlite3_bind_text(countStmt, 1, numCuenta, -1, SQLITE_STATIC);
+    
+    if (sqlite3_step(countStmt) == SQLITE_ROW) {
+        count = sqlite3_column_int(countStmt, 0);
+    }
+    
+    sqlite3_finalize(countStmt);
+    return count;
+}
 
-    cuentas = calloc(capacidad, sizeof(char*));
-    if (!cuentas)
-    {
+int asignarTarjetas(Cuenta *cuenta) {
+    sqlite3_stmt *stmt;
+    char *sql = "SELECT numTarjeta FROM Tarjeta WHERE numCuenta = ?;";
+    
+    // Primero contar las tarjetas
+    int numTarj = contarTarjetas(cuenta->numCuenta);
+    if (numTarj <= 0) return numTarj;
+    
+    // Asignar memoria para las tarjetas
+    cuenta->numTarjetasDisp = numTarj;
+    cuenta->tarjetasDisp = calloc(numTarj, sizeof(Tarjeta));
+    
+    // Preparar consulta para obtener datos
+    if (sqlite3_prepare_v2(dbHandler, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        printf("Error al preparar la consulta");
+        return -1;
+    }
+    
+    sqlite3_bind_text(stmt, 1, cuenta->numCuenta, -1, SQLITE_STATIC);
+    
+    int idx = 0;
+    while (sqlite3_step(stmt) == SQLITE_ROW && idx < numTarj) {
+        Tarjeta tarjeta;
+        const unsigned char *numTarj = sqlite3_column_text(stmt, 0);
+        strcpy(tarjeta.numTarjeta, (const char *)numTarj);
+        cuenta->tarjetasDisp[idx] = tarjeta;
+        idx++;
+    }
+    
+    sqlite3_finalize(stmt);
+    return idx;  // Devuelve número real de tarjetas cargadas
+}
+
+
+int contarCuentas(const char *dni, int password) {
+    sqlite3_stmt *countStmt;
+    int count = 0;
+    
+    char *sql = "SELECT COUNT(*) FROM Usuario u, AccesoUsCuenta a WHERE u.dni = ? AND u.password = ? AND u.dni = a.dni;";
+    if (sqlite3_prepare_v2(dbHandler, sql, -1, &countStmt, NULL) != SQLITE_OK) {
+        printf("Error: al preparar el statement para contar cuentas\n");
+        return -1;
+    }
+    
+    sqlite3_bind_text(countStmt, 1, dni, -1, SQLITE_STATIC);
+    sqlite3_bind_int(countStmt, 2, password);
+    
+    if (sqlite3_step(countStmt) == SQLITE_ROW) {
+        count = sqlite3_column_int(countStmt, 0);
+    }
+    
+    sqlite3_finalize(countStmt);
+    return count;
+}
+
+Usuario *cargarUsuario(const char *dni, int password) {
+    // Primero contar cuántas cuentas tiene el usuario
+    int numCuentas = contarCuentas(dni, password);
+    if (numCuentas <= 0) {
+        printf("No se ha encontrado ninguna cuenta disponible o error en la consulta\n");
         return NULL;
     }
     
-
+    // Crear el usuario y asignar memoria para las cuentas
+    Usuario *usuario = calloc(1, sizeof(Usuario));
+    if (!usuario) {
+        printf("Error: No se pudo asignar memoria para el usuario\n");
+        return NULL;
+    }
     
-    if((sqlite3_prepare_v2(dbHandler, sql, -1, &stmt, NULL)) != SQLITE_OK){
+    usuario->cuentasDisp = calloc(numCuentas, sizeof(Cuenta));
+    if (!usuario->cuentasDisp) {
+        printf("Error: No se pudo asignar memoria para las cuentas\n");
+        free(usuario);
+        return NULL;
+    }
+    
+    usuario->numCuentasDisp = numCuentas;
+    
+    // Crear el statement para obtener los números de cuenta
+    sqlite3_stmt *stmt;
+    char *sql = "SELECT a.numCuenta FROM Usuario u, AccesoUsCuenta a WHERE u.dni = ? AND u.password = ? AND u.dni = a.dni;";
+    
+    if (sqlite3_prepare_v2(dbHandler, sql, -1, &stmt, NULL) != SQLITE_OK) {
         printf("Error: al preparar el statement\n");
-        free(cuentas);
+        free(usuario->cuentasDisp);
+        free(usuario);
         return NULL;
     }
-
+    
     // Asignar valores a los parámetros `?`
     sqlite3_bind_text(stmt, 1, dni, -1, SQLITE_STATIC);
     sqlite3_bind_int(stmt, 2, password);
-
-    while (sqlite3_step(stmt) != SQLITE_DONE)
-    {
-        if (*numCuentas >= capacidad)
-        {
-            capacidad *= 2;
-            char **temp = realloc(cuentas, sizeof(char*) * capacidad);
-
-            if (!temp)
-            {
-                for (int i = 0; i < *numCuentas; i++)
-                {
-                    free(cuentas[i]);
-                }
-                free(cuentas);
-                sqlite3_finalize(stmt);
-                return NULL;
-                
-            }
-
-            cuentas = temp;
-            
-        }
-
-        const char *numCuentaActual = (const char*)sqlite3_column_text(stmt, 0);
-        int longitud = strlen(numCuentaActual);
-        cuentas[*numCuentas] = calloc(longitud + 1, sizeof(char));
-        if (cuentas[*numCuentas]) {
-            strcpy(cuentas[*numCuentas], numCuentaActual);
-            (*numCuentas)++;
-        }
-    }
-
-    if (*numCuentas == 0)
-    {
-        free(cuentas);
-        cuentas = NULL;
-    } else if(*numCuentas < capacidad){
-        char **temp = realloc(cuentas, (*numCuentas) * sizeof(char*));
-        if (temp)
-        {
-            cuentas = temp;
-        }
-        
-    }
-
-    sqlite3_finalize(stmt);
-
-    return cuentas;
     
+    int idx = 0;
+    while (sqlite3_step(stmt) == SQLITE_ROW && idx < numCuentas) {
+        Cuenta cuenta;
+        const unsigned char *numCuenta = sqlite3_column_text(stmt, 0);
+        
+        // Verificar que el número de cuenta no es NULL
+        if (numCuenta) {
+            // Asegurar que no hay desbordamiento de buffer
+            strncpy(cuenta.numCuenta, (const char*)numCuenta, sizeof(cuenta.numCuenta) - 1);
+            cuenta.numCuenta[sizeof(cuenta.numCuenta) - 1] = '\0';  // Garantizar terminación
+            
+            // Asignar tarjetas a esta cuenta
+            int rc = asignarTarjetas(&cuenta);
+            if (rc == -1) {
+                printf("Error al cargar las tarjetas en la cuenta\n");
+                // Continuar con otras cuentas a pesar del error
+            }
+            
+            usuario->cuentasDisp[idx] = cuenta;
+            idx++;
+        }
+    }
+    
+    // Actualizar el número real de cuentas cargadas
+    if (idx < numCuentas) {
+        printf("Advertencia: Se cargaron menos cuentas (%d) de las esperadas (%d)\n", idx, numCuentas);
+        usuario->numCuentasDisp = idx;
+    }
+    
+    sqlite3_finalize(stmt);
+    
+    // Si no se cargó ninguna cuenta, liberar memoria y devolver NULL
+    if (idx == 0) {
+        printf("Error: No se pudo cargar ninguna cuenta\n");
+        free(usuario->cuentasDisp);
+        free(usuario);
+        return NULL;
+    }
+    
+    return usuario;
 }
 
 
@@ -289,7 +364,6 @@ void cargarAccesoUsuario(Usuario *usuario){
 // Cargar cuenta desde la BD
 Cuenta* cargarCuenta(const char *numCuenta) {
 
-    printf("Funcion cargar cuenta %s\n", numCuenta);
     sqlite3_stmt *stmt;
     const char *sql = "SELECT * FROM CUENTA WHERE numCuenta = ?;";
 
@@ -429,7 +503,7 @@ int contarTransaccionesCuenta(char* numCuenta){
     return contador;
 }
 
-int mostrarTransaccionesCuenta(char* numCuenta){
+int cargarTransaccionesCuenta(char* numCuenta){
     // FALTA LIBERAR MEMORIA AAAAAAAA
     sqlite3_stmt *stmt;
 
@@ -633,6 +707,7 @@ int guardarTarjeta(Tarjeta *tarjeta){
     sqlite3_finalize(stmt);
     return 0;
 }
+
 
 
 Tarjeta* cargarTarjeta(const char *numTarjeta){

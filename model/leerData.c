@@ -123,6 +123,10 @@ void leerTransacciones(){
 
         //printf("Id: %d, Origen: %s, Tarjeta: %s, Destino: %s, Cantidad: %d, Fecha: %s, Dir: %s, Estado: %d, Tipo: %d\n",
         //transaccionActual.id, transaccionActual.numCuentaOrigen, transaccionActual.numeroTarjetaOrigen, transaccionActual.numCuentaDestino,transaccionActual.cantidad, transaccionActual.fecha, transaccionActual.dirATM, transaccionActual.estado, transaccionActual.tipo);
+        if (transaccionActual.id == 32)
+        {
+            printf("Estado: %d, Tipo: %d", transaccionActual.estado, transaccionActual.tipo);
+        }
         
         guardarTransaccion(&transaccionActual);
 

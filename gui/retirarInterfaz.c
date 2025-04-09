@@ -44,7 +44,7 @@ void mostrarRetirarInterfaz(void){
                 {
                 case 1:
                     clearScreen();
-                    operacionCorrecta = retirarDinero(getUsuarioActual()->numCuentaActual, cantidad);
+                    operacionCorrecta = retirarDinero(getUsuarioActual()->cuentaActual.numCuenta, cantidad);
                     if (operacionCorrecta != 0)
                     {
                         printf("Error en la retirada de dinero\n");
