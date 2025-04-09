@@ -3,10 +3,12 @@
 #include "inicioInterfaz.h"
 #include <stdio.h>
 #include "sistem.h"
+#include <string.h>
 #include "bd.h"
 #include <stdlib.h>
 #include "usuarioHandler.h"
 #include "cuentasDisponibles.h"
+
 
 void mostrarCuentas(Usuario *usuario){
 
@@ -15,7 +17,7 @@ void mostrarCuentas(Usuario *usuario){
     int numCuentas = usuario->cuentasDisp->numCuentas;
     for (int i = 0; i < numCuentas; i++)
     {
-        printf("[%d] %s\n", i, usuario->cuentasDisp->cuentas[i]->numCuenta);
+        printf("[%d] %s\n", i, usuario->cuentasDisp->cuentas[i]);
     }
 
     printf("Seleccione una cuenta: ");
@@ -23,10 +25,8 @@ void mostrarCuentas(Usuario *usuario){
     fgets(bufferOpcion, sizeof(bufferOpcion), stdin);  
     int opcion = leerInteger(bufferOpcion);
 
-    Cuenta *cuentaAct = cargarCuenta(usuario->cuentasDisp->cuentas[opcion]->numCuenta);
-    printf("Cuenta bd: %s\n", cuentaAct->numCuenta);
-    usuario->cuentaActual = cuentaAct;
-    printf("Cuenta actual: %s\n", usuario->cuentaActual->numCuenta);
+    strcpy(usuario->numCuentaActual, usuario->cuentasDisp->cuentas[opcion]);
+    printf("Cuenta actual: %s\n", usuario->numCuentaActual);
     mostrarInicioInterfaz();
 
 }
@@ -47,23 +47,27 @@ int iniciarSesion(){
     int contrasena = leerInteger(bufferContrasena);
 
     //buscar usuario
-    Usuario *usuario = cargarUsuario(bufferDni, contrasena);
+    int numCuentas = 0;
+    char **cuentas = cargarUsuario(bufferDni, contrasena, &numCuentas);
     
-    if (usuario->valido == NO) //si no valido, mostrar y liberar memoria
+    if (!cuentas) //si no valido, mostrar y liberar memoria
     {
         clearScreen();
-        free(usuario);
         printf("Usuario o contraseña incorrecta. Intentelo de nuevo.\n");
         printf("Presione enter para continuar...");
         limpiarBuffer();
         return 1;
 
     }
+    Usuario *usuarioActual = calloc(1, sizeof(Usuario));
+    usuarioActual->cuentasDisp = calloc(1, sizeof(CuentasDisponibles));
+    usuarioActual->cuentasDisp->cuentas = cuentas;
+    usuarioActual->cuentasDisp->numCuentas = numCuentas;
 
     //set usuario actual y mostrar cuentas
-    setUsuarioActual(usuario);
+    setUsuarioActual(usuarioActual);
 
-    mostrarCuentas(usuario);
+    mostrarCuentas(usuarioActual);
     
 }
 

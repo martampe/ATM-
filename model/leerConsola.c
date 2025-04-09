@@ -5,6 +5,11 @@
 #include <stdio.h>
 #include "leerConsola.h"
 
+void limpiarBuffer(){
+    char c;
+    while ((c = getchar()) != '\n' && c != EOF); 
+}
+
 int eliminarSaltoLinea(char *linea){
 
     if (strchr(linea, '\n') != NULL)
@@ -12,14 +17,34 @@ int eliminarSaltoLinea(char *linea){
         linea[strcspn(linea, "\n")] = '\0';
         return 0;
     }
+    limpiarBuffer();
     return 1;
     
 }
 
-void limpiarBuffer(){
-    char c;
-    while ((c = getchar()) != '\n' && c != EOF); 
+int leerEntradaSegura(char *buffer, size_t tamanio) {
+    if (fgets(buffer, tamanio, stdin) == NULL) {
+        return 0; // Error en la lectura
+    }
+    
+    // Verificar si se ha desbordado el buffer (no hay '\n' al final)
+    size_t longitud = strlen(buffer);
+    if (longitud > 0 && buffer[longitud - 1] == '\n') {
+        // Eliminar el salto de línea
+        buffer[longitud - 1] = '\0';
+        return 1; // Lectura exitosa
+    } else if (longitud == tamanio - 1) {
+        // El buffer se llenó pero no se encontró '\n'
+        // Limpiar el stream de entrada
+        limpiarBuffer();
+        printf("Error al leer por consola\n");
+        printf("Presiona enter para continuar...");
+        limpiarBuffer();
+    }
+    
+    return 1; // Lectura correcta
 }
+
 
 int leerInteger(char *numero){
 

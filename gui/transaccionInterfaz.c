@@ -32,32 +32,27 @@ void mostrarTransaccionInterfaz(void){
         {
         case 1:
             clearScreen();
-            printf("Realizando ransaccion\n");
+            printf("Realizando transaccion\n");
 
-            printf("Introduce el ISBN destino: ");
-            fgets(bufferISBN, sizeof(bufferISBN), stdin);
+            
+            
+            do
+            {
+                printf("Introduce el ISBN destino: ");
+            } while ((leerEntradaSegura(bufferISBN, sizeof(bufferISBN))) != 0);
+            
 
-            int rt = eliminarSaltoLinea(bufferISBN);
-
-            if(rt != 0){
-                clearScreen();
-                printf("Error: Error al procesar el ISBN\n");
-                printf("Persiona enter para continuar...");
-                limpiarBuffer();
-            }
-
-
+            
             printf("Introduce la cantidad a transferir: ");
             fgets(bufferCantidad, sizeof(bufferCantidad), stdin);
-
 
             cantidad = leerInteger(bufferCantidad);
             if (cantidad > 0)
             {
-                operacionCorrecta = realizarTransferencia(getUsuarioActual()->cuentaActual->numCuenta, bufferISBN, cantidad);
+                operacionCorrecta = realizarTransferencia(getUsuarioActual()->numCuentaActual, bufferISBN, cantidad);
                 clearScreen();
-                printf("Operacion realizada a ISBN: %s de %d\n", bufferISBN, cantidad);
-                printf("Persiona enter para continuar...");
+                printf("Operacion realizada a ISBN: %s de %d euros\n", bufferISBN, cantidad);
+                printf("Presiona enter para continuar...");
                 limpiarBuffer();
             } else {
                 clearScreen();

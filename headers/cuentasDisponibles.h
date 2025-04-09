@@ -5,7 +5,7 @@
 
 typedef struct 
 {
-    Cuenta **cuentas;
+    char **cuentas;
     int numCuentas;
 }CuentasDisponibles;
 

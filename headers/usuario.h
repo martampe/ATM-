@@ -3,6 +3,7 @@
 
 #include "cuenta.h"
 #include "cuentasDisponibles.h"
+#include "transaccion.h"
 typedef enum{
     YES,
     NO
@@ -23,7 +24,9 @@ typedef struct
     char respuesta_seguridad[100];
     char dir [50];
     CuentasDisponibles *cuentasDisp;
-    Cuenta *cuentaActual;
+    char numCuentaActual[25];
+    Transaccion *transaciones;
+    int numeroTransacciones;
 
     
 }Usuario;

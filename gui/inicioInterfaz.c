@@ -9,15 +9,10 @@
 #include "cuentasInterfaz.h"
 #include "configuracionInterfaz.h"
 #include "sistem.h"
+#include "usuarioHandler.h"
 void mostrarInicioInterfaz(void){
 
-    //historial
-    //retirar
-    //ingresar
-    //transaccion
-    //cuentas
-    //configuracion
-
+  
     char buffer[3];
     int seleccion;
     do{
