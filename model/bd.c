@@ -105,9 +105,10 @@ int asignarTarjetas(Cuenta *cuenta) {
     int idx = 0;
     while (sqlite3_step(stmt) == SQLITE_ROW && idx < numTarj) {
         Tarjeta tarjeta;
-        const unsigned char *numTarj = sqlite3_column_text(stmt, 0);
+        const char *numTarj = sqlite3_column_text(stmt, 0);
         strcpy(tarjeta.numTarjeta, (const char *)numTarj);
         cuenta->tarjetasDisp[idx] = tarjeta;
+        printf("Num tarjeta: %s", numTarj);
         idx++;
     }
     
@@ -189,6 +190,7 @@ Usuario *cargarUsuario(const char *dni, int password) {
             
             // Asignar tarjetas a esta cuenta
             int rc = asignarTarjetas(&cuenta);
+            printf("Cuentas: %s Tarjetas: %d", cuenta.numCuenta, cuenta.numTarjetasDisp);
             if (rc == -1) {
                 printf("Error al cargar las tarjetas en la cuenta\n");
                 // Continuar con otras cuentas a pesar del error
@@ -746,7 +748,7 @@ int guardarTransaccion(Transaccion *transaccion){
         return 1;
     }
     sqlite3_stmt *stmt;
-    const char *sql = "INSERT INTO TRANSACCION VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    const char *sql = "INSERT INTO TRANSACCION (numCuentaOrig, numTarjetaOrig, numCuentaDest, cant, fecha, dirATM, estado, tipo)VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
     int rt = sqlite3_prepare_v2(dbHandler, sql, -1, &stmt, 0);
     if (rt != SQLITE_OK) {
@@ -755,15 +757,15 @@ int guardarTransaccion(Transaccion *transaccion){
         return 1;
     }
 
-    sqlite3_bind_int(stmt, 1, transaccion-> id);
-    sqlite3_bind_text(stmt, 2, transaccion->numCuentaOrigen, -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 3, transaccion->numeroTarjetaOrigen, -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 4, transaccion->numCuentaDestino, -1, SQLITE_STATIC);
-    sqlite3_bind_double(stmt, 5, transaccion->cantidad);
-    sqlite3_bind_text(stmt, 6, transaccion->fecha, -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 7, transaccion->dirATM, -1, SQLITE_STATIC);
-    sqlite3_bind_double(stmt, 8, transaccion->estado);
-    sqlite3_bind_int(stmt, 9, transaccion->tipo);
+    //sqlite3_bind_int(stmt, 1, transaccion-> id);
+    sqlite3_bind_text(stmt, 1, transaccion->numCuentaOrigen, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, transaccion->numeroTarjetaOrigen, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, transaccion->numCuentaDestino, -1, SQLITE_STATIC);
+    sqlite3_bind_double(stmt, 4, transaccion->cantidad);
+    sqlite3_bind_text(stmt, 5, transaccion->fecha, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 6, transaccion->dirATM, -1, SQLITE_STATIC);
+    sqlite3_bind_double(stmt, 7, transaccion->estado);
+    sqlite3_bind_int(stmt, 8, transaccion->tipo);
 
 
 

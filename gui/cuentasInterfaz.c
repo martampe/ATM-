@@ -13,6 +13,12 @@ void mostrarDetallesCuentaInterfaz(char *cuenta){
         clearScreen();
         printf("Detalles de Cuenta <<%s>>\n", cuenta);
         Cuenta *cuentaSelecionada = cargarCuenta((const char*) cuenta);
+        printf("Num tarjetas: %d", cuentaSelecionada->numTarjetasDisp);
+        for (int i = 0; i < cuentaSelecionada->numTarjetasDisp; i++)
+        {
+            printf("Num %s\n", cuentaSelecionada->tarjetasDisp[i].numTarjeta);
+        }
+        
         printf("Numero de cuenta      saldo     tarjetas\n");
         printf("%s    %.2f    %s", cuentaSelecionada->numCuenta, cuentaSelecionada->saldo, cuentaSelecionada->numTarjetasDisp != 0 ? cuentaSelecionada->tarjetasDisp[0].numTarjeta : "");
         for (int i = 1; i < cuentaSelecionada->numTarjetasDisp; i++)
