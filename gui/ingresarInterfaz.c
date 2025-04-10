@@ -9,9 +9,12 @@ void mostrarIngresarInterfaz(void){
     int cantidad;
     int operacionCorrecta = -1;
     do{
-        //clearScreen();
+        clearScreen();
 
-        printf("Ingresar Dinero\n");
+        printf("<<Ingresar Dinero>>\n");
+        printf("*-------------*\n");
+        printf("| Saldo: %2.f |\n", getUsuarioActual()->cuentaActual.saldo);
+        printf("*-------------*\n");
         printf("[0] Volver al menu principal\n"
                "Introduzca la cantidad a ingresar ('0' para cancelar): ");
         fgets(buffer, sizeof(buffer), stdin);
@@ -60,6 +63,7 @@ void mostrarIngresarInterfaz(void){
                         printf("Operacion cancelada\n");
                         printf("Persiona enter para continuar...");
                         limpiarBuffer();
+                        return;
                         break;
                     default:
                         operacionCorrecta = -1;

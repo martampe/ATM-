@@ -22,7 +22,7 @@ int iniciarRegistrar(){
     char bufferPregunta_seguridad[100];
     char bufferRespuesta_seguridad[100];
     char bufferDir [50];
-    printf("Registrar nuevo usuario\n"
+    printf("<<Registrar nuevo usuario>>\n"
            "Ingrese los datos solicitados:\n");
     
     do

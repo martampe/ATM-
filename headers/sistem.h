@@ -10,5 +10,6 @@
 #endif
 
 void clearScreen();
+void liberarMemoria();
 
 #endif

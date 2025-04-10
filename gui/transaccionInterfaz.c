@@ -19,7 +19,10 @@ void mostrarTransaccionInterfaz(void){
     do{
         clearScreen();
 
-        printf("Transaccion\n");
+        printf("<<Transaccion>>\n");
+        printf("*-------------*\n");
+        printf("| Saldo: %2.f |\n", getUsuarioActual()->cuentaActual.saldo);
+        printf("*-------------*\n");
         printf("[0] Volver al menu pricipal\n"
             "[1] Realizar transaccion\n"
             "Seleccionar operacion: ");

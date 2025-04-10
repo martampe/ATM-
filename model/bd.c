@@ -5,6 +5,7 @@
 #include "config.h"
 #include <tarjeta.h>
 #include "usuarioHandler.h"
+#include <time.h>
 
 static sqlite3* dbHandler = NULL;
 
@@ -20,6 +21,39 @@ void abrirBD(){
     }
 
     dbHandler = db;
+
+}
+
+int borrarBD(){
+    sqlite3_stmt *stmt;
+
+    char *sql = "DELETE FROM Transaccion;";
+    if (sqlite3_prepare(dbHandler, sql, -1, &stmt, NULL)) return -1;
+    if((sqlite3_step(stmt)) != SQLITE_DONE) return -1;
+    sqlite3_reset(stmt);
+
+    sql = "DELETE FROM Tarjeta;";
+    if (sqlite3_prepare(dbHandler, sql, -1, &stmt, NULL)) return -1;
+    if((sqlite3_step(stmt)) != SQLITE_DONE) return -1;
+    sqlite3_reset(stmt);
+
+    sql = "DELETE FROM AccesoUsCuenta;";
+    if (sqlite3_prepare(dbHandler, sql, -1, &stmt, NULL)) return -1;
+    if((sqlite3_step(stmt)) != SQLITE_DONE) return -1;
+    sqlite3_reset(stmt);
+
+    sql = "DELETE FROM Cuenta;";
+    if (sqlite3_prepare(dbHandler, sql, -1, &stmt, NULL)) return -1;
+    if((sqlite3_step(stmt)) != SQLITE_DONE) return -1;
+    sqlite3_reset(stmt);
+
+    sql = "DELETE FROM Usuario;";
+    if (sqlite3_prepare(dbHandler, sql, -1, &stmt, NULL)) return -1;
+    if((sqlite3_step(stmt)) != SQLITE_DONE) return -1;
+    sqlite3_reset(stmt);
+    
+    
+    
 
 }
 
@@ -108,7 +142,6 @@ int asignarTarjetas(Cuenta *cuenta) {
         const char *numTarj = sqlite3_column_text(stmt, 0);
         strcpy(tarjeta.numTarjeta, (const char *)numTarj);
         cuenta->tarjetasDisp[idx] = tarjeta;
-        printf("Num tarjeta: %s", numTarj);
         idx++;
     }
     
@@ -190,15 +223,22 @@ Usuario *cargarUsuario(const char *dni, int password) {
             
             // Asignar tarjetas a esta cuenta
             int rc = asignarTarjetas(&cuenta);
-            printf("Cuentas: %s Tarjetas: %d", cuenta.numCuenta, cuenta.numTarjetasDisp);
             if (rc == -1) {
                 printf("Error al cargar las tarjetas en la cuenta\n");
                 // Continuar con otras cuentas a pesar del error
             }
-            
+            double saldo = consultarSaldo(cuenta.numCuenta);
+            if (saldo != -1){
+                cuenta.saldo = saldo;
+            }
             usuario->cuentasDisp[idx] = cuenta;
             idx++;
+            
         }
+
+        
+        
+        
     }
     
     // Actualizar el número real de cuentas cargadas
@@ -499,7 +539,6 @@ int contarTransaccionesCuenta(char* numCuenta){
         contador++;
     }
 
-    printf("Transacciones contadas correctamente");
     sqlite3_finalize(stmt);
     
     return contador;
@@ -527,7 +566,7 @@ int cargarTransaccionesCuenta(char* numCuenta){
     getUsuarioActual()->numeroTransacciones = contador;
     
 
-    char *sql = "SELECT * FROM Transaccion WHERE numCuentaOrig = ? OR numCuentaDest = ?";
+    char *sql = "SELECT * FROM Transaccion WHERE numCuentaOrig = ? OR numCuentaDest = ? ORDER BY fecha DESC";
 
     int rt = sqlite3_prepare_v2(dbHandler, sql, -1, &stmt, 0);
     
@@ -541,64 +580,200 @@ int cargarTransaccionesCuenta(char* numCuenta){
 
     int ultimoElemento = 0;
     while (sqlite3_step(stmt) == SQLITE_ROW) {
-        printf("Transaccion encontrada\n");
-
-        // Extraer datos de la consulta, IMPORTANTE, COMPROBAR TIPOS DE DATOS
+        
+        // Extraer datos con verificación
         Transaccion t;
         t.id = sqlite3_column_int(stmt, 0);
-        strcpy(t.numCuentaOrigen, (const char*)sqlite3_column_text(stmt, 1));
-        strcpy(t.numeroTarjetaOrigen, (const char*)sqlite3_column_text(stmt, 2));
-        strcpy(t.numCuentaDestino, (const char*)sqlite3_column_text(stmt, 3));
+        
+        const char* temp_text;
+        
+        // Manejo seguro de las cadenas
+        temp_text = (const char*)sqlite3_column_text(stmt, 1);
+        strncpy(t.numCuentaOrigen, (temp_text != NULL) ? temp_text : "", sizeof(t.numCuentaOrigen) - 1);
+        t.numCuentaOrigen[sizeof(t.numCuentaOrigen) - 1] = '\0';
+        
+        temp_text = (const char*)sqlite3_column_text(stmt, 2);
+        strncpy(t.numeroTarjetaOrigen, (temp_text != NULL) ? temp_text : "", sizeof(t.numeroTarjetaOrigen) - 1);
+        t.numeroTarjetaOrigen[sizeof(t.numeroTarjetaOrigen) - 1] = '\0';
+        
+        temp_text = (const char*)sqlite3_column_text(stmt, 3);
+        strncpy(t.numCuentaDestino, (temp_text != NULL) ? temp_text : "", sizeof(t.numCuentaDestino) - 1);
+        t.numCuentaDestino[sizeof(t.numCuentaDestino) - 1] = '\0';
+        
         t.cantidad = sqlite3_column_double(stmt, 4);
-        strcpy(t.fecha, (const char*)sqlite3_column_text(stmt, 5));
-        strcpy(t.dirATM, (const char*)sqlite3_column_text(stmt, 6));
+        
+        temp_text = (const char*)sqlite3_column_text(stmt, 5);
+        strncpy(t.fecha, (temp_text != NULL) ? temp_text : "", sizeof(t.fecha) - 1);
+        t.fecha[sizeof(t.fecha) - 1] = '\0';
+        
+        temp_text = (const char*)sqlite3_column_text(stmt, 6);
+        strncpy(t.dirATM, (temp_text != NULL) ? temp_text : "", sizeof(t.dirATM) - 1);
+        t.dirATM[sizeof(t.dirATM) - 1] = '\0';
+        
         t.estado = sqlite3_column_int(stmt, 7);
         t.tipo = sqlite3_column_int(stmt, 8);
-
+        
         transacciones[ultimoElemento] = t;
-        ultimoElemento ++;
-
-        printf("ID: %d | Cuenta origen: %s | Tarjeta origen: %s | Cuenta destino: %s | Cantidad: %i | Fecha: %s | Direccion ATM: %s | Estado: %d | Tipo: %d |\n",
-            t.id, t.numCuentaOrigen, t.numeroTarjetaOrigen, t.numCuentaDestino, t.cantidad, t.fecha, t.dirATM, t.estado, t.tipo);
-
+        ultimoElemento++;
+            
+        
+            
     }
 
     getUsuarioActual()->transaciones = transacciones;
 
 
-    printf("Transacciones cargadas correctamente.");
     sqlite3_finalize(stmt);
     return 0;
 }
 
-double consultarSaldo(char *numCuenta, sqlite3_stmt *stmt){
+double consultarSaldo(const char *numCuenta){
+    sqlite3_stmt *stmt;
+
     char *sql = "SELECT saldo from Cuenta where numCuenta = ?;";
 
     sqlite3_prepare_v2(dbHandler, sql, -1, &stmt, NULL);
 
     sqlite3_bind_text(stmt, 1, numCuenta, -1, SQLITE_STATIC);
 
-    if ((sqlite3_step(stmt)) == SQLITE_DONE)
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        double saldo = sqlite3_column_double(stmt, 0);
+        sqlite3_finalize(stmt);
+
+        return saldo;
+    } else {
+        sqlite3_finalize(stmt);
+        return -1; // O cualquier otro valor que indique error
+    }
+    
+}
+/*
+
+	"numCuentaOrig"	TEXT,
+	"numTarjetaOrig"	TEXT,
+	"numCuentaDest"	TEXT,
+	"cant"	REAL,
+	"fecha"	TEXT,
+	"dirATM"	TEXT,
+	"estado"	INTEGER,
+	"tipo"	INTEGER,
+
+*/    
+
+int registrarIngreso(const char *numCuentaDest, double cant){
+    sqlite3_stmt *stmt;
+
+    char *sql = "INSERT INTO Transaccion (numCuentaDest, cant, fecha, estado, tipo) VALUES (?, ?, ?, ?, ?);";
+
+    if(sqlite3_prepare(dbHandler, sql, -1, &stmt, NULL) != SQLITE_OK){
+        printf("Error al crear al preparar la consulta\n");
+        return -1;
+    }
+    time_t t = time(NULL);
+    struct tm *tm_info = localtime(&t);
+    
+    char fecha[11]; // Espacio para "yyyy-mm-dd" + caracter nulo
+    strftime(fecha, sizeof(fecha), "%Y-%m-%d", tm_info);
+    printf("FECHA: %s", fecha);
+
+    sqlite3_bind_text(stmt, 1, numCuentaDest, -1, SQLITE_STATIC);
+    sqlite3_bind_double(stmt, 2, cant);
+    sqlite3_bind_text(stmt, 3, fecha, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 4, 1);
+    sqlite3_bind_int(stmt, 5, 4);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE)
     {
+        printf("Error al ingresar el retiro\n");
         return -1;
     }
 
-    double saldo = sqlite3_column_double(stmt, 0);
-    sqlite3_reset(stmt);
-    sqlite3_clear_bindings(stmt);
-    return saldo;
+    printf("Ingresp registrado correctamente\n");
+
+    sqlite3_finalize(stmt);
+    return 0;
     
 }
 
-int realizarTransferencia(char *cuentaOrig, char *cuentaDest, double cantidad){
+int registrarRetiro(const char *numCuentaOrig, double cant){
+    sqlite3_stmt *stmt;
+
+    char *sql = "INSERT INTO Transaccion (numCuentaOrig, cant, fecha, estado, tipo) VALUES (?, ?, ?, ?, ?);";
+
+    if(sqlite3_prepare(dbHandler, sql, -1, &stmt, NULL) != SQLITE_OK){
+        printf("Error al crear al preparar la consulta: %s\n", sqlite3_errmsg(dbHandler));
+        return -1;
+    }
+    time_t t = time(NULL);
+    struct tm *tm_info = localtime(&t);
+    
+    char fecha[11]; // Espacio para "yyyy-mm-dd" + caracter nulo
+    strftime(fecha, sizeof(fecha), "%Y-%m-%d", tm_info);
+    printf("FECHA: %s", fecha);
+
+    sqlite3_bind_text(stmt, 1, numCuentaOrig, -1, SQLITE_STATIC);
+    sqlite3_bind_double(stmt, 2, cant);
+    sqlite3_bind_text(stmt, 3, fecha, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 4, 1);
+    sqlite3_bind_int(stmt, 5, 3);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
+        printf("Error al registrar el retiro\n");
+        return -1;
+    }
+
+    printf("Retiro registrado correctamente\n");
+
+    sqlite3_finalize(stmt);
+    return 0;
+    
+}
+
+int registrarTransaccion(const char *cuentaOrigen, const char *cuentaDestino, double cantidad){
+    sqlite3_stmt *stmt;
+
+    char *sql = "INSERT INTO Transaccion (numCuentaOrig, numCuentaDest, cant, fecha, estado, tipo) VALUES (?, ?, ?, ?, ?, ?);";
+
+    if(sqlite3_prepare(dbHandler, sql, -1, &stmt, NULL) != SQLITE_OK){
+        printf("Error al crear al preparar la consulta\n");
+        return -1;
+    }
+    time_t t = time(NULL);
+    struct tm *tm_info = localtime(&t);
+    
+    char fecha[11]; // Espacio para "yyyy-mm-dd" + caracter nulo
+    strftime(fecha, sizeof(fecha), "%Y-%m-%d", tm_info);
+    printf("FECHA: %s", fecha);
+
+    sqlite3_bind_text(stmt, 1, cuentaOrigen, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, cuentaDestino, -1, SQLITE_STATIC);
+    sqlite3_bind_double(stmt, 3, cantidad);
+    sqlite3_bind_text(stmt, 4, fecha, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 5, 1);
+    sqlite3_bind_int(stmt, 6, 1);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
+        printf("Error al registrar la transaccion\n");
+        return -1;
+    }
+
+    printf("Transaccion registrada correctamente\n");
+
+    sqlite3_finalize(stmt);
+    return 0;
+    
+
+}
+
+int realizarTransferencia(const char *cuentaOrig, const char *cuentaDest, double cantidad){
 
     sqlite3_stmt *stmt;
 
-    
-
     //Actualizar cuenta origen
 
-    double saldoOrig = consultarSaldo(cuentaOrig, stmt);
+    double saldoOrig = consultarSaldo(cuentaOrig);
     printf("Saldo original: %.2f, Cantidad: %.2f\n", saldoOrig, cantidad);
     if (saldoOrig < cantidad)
     {
@@ -649,31 +824,10 @@ int realizarTransferencia(char *cuentaOrig, char *cuentaDest, double cantidad){
 
     printf("Cuenta destino actualizada correctamente\n");
 
-
-    /*// Una vez actualizado el saldo de la cuenta, añadimos la fila a la tabla transaccion
-    sql = "INSERT INTO Transaccion (numCuentaOrig, numCuentaDest, cantidad, fecha) VALUES (?, ?, ?, datetime('now'));";
-
-    rt = sqlite3_prepare_v2(dbHandler, sql, -1, &stmt, NULL);
-    if (rt != SQLITE_OK) {
-        printf("Error al preparar la inserción de la transacción: %s\n", sqlite3_errmsg(dbHandler));
-        return -1;
-    }
-
-    sqlite3_bind_text(stmt, 1, cuentaOrig, -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 2, cuentaDest, -1, SQLITE_STATIC);
-    sqlite3_bind_double(stmt, 3, cantidad);
-    // Los valores `fecha`, `dirATM`, `estado`, `tipo` están quemados por ahora
-
-    if (sqlite3_step(stmt) != SQLITE_DONE) {
-        printf("Error al insertar transacción\n");
-        sqlite3_finalize(stmt);
-        return -1;
-    }
-
-    printf("Transferencia realizada\n");*/
-
     sqlite3_finalize(stmt);
 
+    if ((registrarTransaccion(cuentaOrig, cuentaDest, cantidad)) != 0) return -1;
+    
     return 0;
 }
 
@@ -757,28 +911,57 @@ int guardarTransaccion(Transaccion *transaccion){
         return 1;
     }
 
-    //sqlite3_bind_int(stmt, 1, transaccion-> id);
-    sqlite3_bind_text(stmt, 1, transaccion->numCuentaOrigen, -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 2, transaccion->numeroTarjetaOrigen, -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 3, transaccion->numCuentaDestino, -1, SQLITE_STATIC);
+     // Comprobar numCuentaOrigen
+     if (strcmp(transaccion->numCuentaOrigen, "VACIO") == 0) {
+        sqlite3_bind_null(stmt, 1);
+    } else {
+        sqlite3_bind_text(stmt, 1, transaccion->numCuentaOrigen, -1, SQLITE_STATIC);
+    }
+    
+    // Comprobar numeroTarjetaOrigen
+    if (strcmp(transaccion->numeroTarjetaOrigen, "VACIO") == 0) {
+        sqlite3_bind_null(stmt, 2);
+    } else {
+        sqlite3_bind_text(stmt, 2, transaccion->numeroTarjetaOrigen, -1, SQLITE_STATIC);
+    }
+    
+    // Comprobar numCuentaDestino
+    if (strcmp(transaccion->numCuentaDestino, "VACIO") == 0) {
+        sqlite3_bind_null(stmt, 3);
+    } else {
+        sqlite3_bind_text(stmt, 3, transaccion->numCuentaDestino, -1, SQLITE_STATIC);
+    }
+    
+    // Para cantidad no necesitamos comprobar "VACIO" ya que es un número
     sqlite3_bind_double(stmt, 4, transaccion->cantidad);
-    sqlite3_bind_text(stmt, 5, transaccion->fecha, -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 6, transaccion->dirATM, -1, SQLITE_STATIC);
+    
+    // Comprobar fecha
+    if (strcmp(transaccion->fecha, "VACIO") == 0) {
+        sqlite3_bind_null(stmt, 5);
+    } else {
+        sqlite3_bind_text(stmt, 5, transaccion->fecha, -1, SQLITE_STATIC);
+    }
+    
+    // Comprobar dirATM
+    if (strcmp(transaccion->dirATM, "VACIO") == 0) {
+        sqlite3_bind_null(stmt, 6);
+    } else {
+        sqlite3_bind_text(stmt, 6, transaccion->dirATM, -1, SQLITE_STATIC);
+    }
+    
+    // Para estado y tipo no necesitamos comprobar "VACIO" ya que son números
     sqlite3_bind_double(stmt, 7, transaccion->estado);
     sqlite3_bind_int(stmt, 8, transaccion->tipo);
-
-
-
+    
+    // Ejecutar la consulta y finalizar el statement (parte que falta en tu código original)
     rt = sqlite3_step(stmt);
-    if (rt != SQLITE_DONE) {
-        printf("Error insertando tarjeta: %s\n", sqlite3_errmsg(dbHandler));
-        sqlite3_finalize(stmt);
-        return 1;
-    } else {
-        printf("Tarjeta insertada correctamente.\n");
-    }
-
     sqlite3_finalize(stmt);
+    
+    if (rt != SQLITE_DONE) {
+        printf("Error ejecutando guardarTransaccion: %s\n", sqlite3_errmsg(dbHandler));
+        return 1;
+    }
+    
     return 0;
 }
 
@@ -815,6 +998,8 @@ int ingresarDinero(const char* numCuenta, double cantidad) {
     printf("Dinero ingresado correctamente.\n");
     sqlite3_finalize(stmt);
 
+    registrarIngreso(numCuenta, cantidad);
+
     return 0;
 }
 
@@ -832,7 +1017,7 @@ int retirarDinero(const char* numCuenta, double cantidad) {
         return -1;
     }
 
-    double saldoActual = consultarSaldo((char*)numCuenta, stmt);
+    double saldoActual = consultarSaldo((char*)numCuenta);
 
     if (saldoActual < cantidad) {
         printf("Saldo insuficiente. Tienes: %.2f\n", saldoActual);
@@ -854,6 +1039,7 @@ int retirarDinero(const char* numCuenta, double cantidad) {
 
     printf("Dinero retirado correctamente.\n");
     sqlite3_finalize(stmt);
+    registrarRetiro(numCuenta, cantidad);
     return 0;
 }
 

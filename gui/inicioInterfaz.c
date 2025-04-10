@@ -10,14 +10,18 @@
 #include "configuracionInterfaz.h"
 #include "sistem.h"
 #include "usuarioHandler.h"
+#include "bd.h"
 void mostrarInicioInterfaz(void){
 
   
     char buffer[3];
     int seleccion;
     do{
-        //clearScreen();
-        printf("Menu principal\n");
+        clearScreen();
+        printf("<<Menu principal>>\n");
+        printf("*-------------*\n");
+        printf("| Saldo: %2.f |\n", getUsuarioActual()->cuentaActual.saldo);
+        printf("*-------------*\n");
         printf("[1] Mostrar historial\n"
             "[2] Retirar dinero\n"
             "[3] Ingresar dinero\n"
@@ -58,6 +62,7 @@ void mostrarInicioInterfaz(void){
             break;
         case 7:
             printf("Saliendo del programa...\n");
+            liberarMemoria();
             break;
         default:
             clearScreen();

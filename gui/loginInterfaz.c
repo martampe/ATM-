@@ -13,7 +13,7 @@ void mostrarLoginInterfaz(void){
     char buffer[3];
     int seleccion;
     do{
-        //clearScreen();
+        clearScreen();
 
         printf("¡Bienvenido a la App!\n");
         printf("[1] Iniciar sesión\n"

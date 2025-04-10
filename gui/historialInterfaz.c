@@ -5,49 +5,83 @@
 #include "sistem.h"
 #include "usuarioHandler.h"
 #include "bd.h"
-
-void imprimirTransaccionCuenta(Transaccion transacccion, int num){
-    if (transacccion.tipo == PAGO_CON_TARJETA) return;
-
-    if (transacccion.tipo == TRANSFERENCIA)
-    {
-        printf("[%d] %s %s %s%d %s %s Tipo: %d\n", num, "Transferencia bancaria", transacccion.fecha,strcmp(transacccion.numCuentaOrigen, getUsuarioActual()->cuentaActual.numCuenta) != 0 ? "" : "-",transacccion.cantidad, transacccion.numCuentaOrigen, transacccion.numCuentaDestino, transacccion.tipo);
-    } else if (transacccion.tipo = INGRESO_EN_EFECTIVO){
-        printf("[%d] %s %s %d\n", num, "Ingreso en efectivo", transacccion.fecha, transacccion.cantidad);
-    } else {
-        printf("[%d] %s %s %d\n", num, "Retiro en efectivo", transacccion.fecha, transacccion.cantidad);
-    }
+void imprimirTransaccionCuenta(Transaccion transaccion, int num){
+    if (transaccion.tipo == PAGO_CON_TARJETA) return;
     
+    char buffer[200];
+    if (transaccion.tipo == TRANSFERENCIA) {
+        int signo = strcmp(transaccion.numCuentaOrigen, getUsuarioActual()->cuentaActual.numCuenta) != 0 ? 1 : -1;
+        int cantidad = signo * transaccion.cantidad;
+        sprintf(buffer, "[%d] %-25s %-10s %8d  %-24s %-24s",
+                num,
+                "Transferencia bancaria",
+                transaccion.fecha,
+                cantidad,
+                transaccion.numCuentaOrigen,
+                transaccion.numCuentaDestino);
+    } else if (transaccion.tipo == INGRESO_EN_EFECTIVO) {
+        sprintf(buffer, "[%d] %-25s %-10s %8d",
+                num,
+                "Ingreso en efectivo",
+                transaccion.fecha,
+                transaccion.cantidad);
+    } else {
+        sprintf(buffer, "[%d] %-25s %-10s %8d",
+                num,
+                "Retiro en efectivo",
+                transaccion.fecha,
+                transaccion.cantidad * -1);
+    }
+    printf("%s\n", buffer);
 }
-
 
 void mostrarTransaccionesCuenta(){
     clearScreen();
-    printf("Transacciones de cuenta: \n");
-    printf("    Tipo de transaccion      Fecha      Cantidad     Cuenta origen      Cuenta destino\n");
-    for (int i = 0; i < getUsuarioActual()->numeroTransacciones; i++)
-    {
+    printf("<<Transacciones de cuenta>> \n");
+    printf("*-------------*\n");
+    printf("| Saldo: %2.f |\n", getUsuarioActual()->cuentaActual.saldo);
+    printf("*-------------*\n");
+
+
+    printf("%-5s %-25s %-10s %8s  %-24s %-24s\n",
+           "Num", "Tipo de transaccion", "Fecha", "Cantidad", "Cuenta origen", "Cuenta destino");
+    printf("--------------------------------------------------------------------------------------------------------\n");
+    
+    for (int i = 0; i < getUsuarioActual()->numeroTransacciones; i++) {
         imprimirTransaccionCuenta(getUsuarioActual()->transaciones[i], i);
     }
-    
+    printf("Presiona cualquier letra para salir...");
+    limpiarBuffer();
 }
 
 void imprimirTransaccionTarjeta(Transaccion transaccion, int i){
-    if (transaccion.tipo == PAGO_CON_TARJETA)
-    {
-        printf("[%d] %s -%d %s\n", i, transaccion.fecha, transaccion.cantidad, transaccion.numeroTarjetaOrigen);
+    if (transaccion.tipo == PAGO_CON_TARJETA) {
+        char buffer[200];
+        sprintf(buffer, "[%d] %-12s %8d      %-20s", 
+                i, 
+                transaccion.fecha, 
+                -transaccion.cantidad, 
+                transaccion.numeroTarjetaOrigen);
+        printf("%s\n", buffer);
     }
-    
 }
 
 void mostrarTransaccionesTarjeta(){
     clearScreen();
-    printf("Operaciones de tarjeta: \n");
-    printf("    Fecha      Cantidad     Tarjeta\n");
-    for (int i = 0; i < getUsuarioActual()->numeroTransacciones; i++)
-    {
+    printf("<<Operaciones de tarjeta>> \n");
+    printf("*-------------*\n");
+    printf("| Saldo: %2.f |\n", getUsuarioActual()->cuentaActual.saldo);
+    printf("*-------------*\n");
+    printf("%-5s %-12s %8s      %-20s\n",
+           "Num", "Fecha", "Cantidad", "Tarjeta");
+    printf("--------------------------------------------------\n");
+    
+    for (int i = 0; i < getUsuarioActual()->numeroTransacciones; i++) {
         imprimirTransaccionTarjeta(getUsuarioActual()->transaciones[i], i);
     }
+    
+    printf("Presiona cualquier letra para salir...");
+    limpiarBuffer();
 }
 
 void mostrarHistorialInterfaz(void) {
@@ -80,9 +114,7 @@ void mostrarHistorialInterfaz(void) {
                     printf("Presiona enter para continuar...");
                     limpiarBuffer();
                     break;
-                }
-                
-                limpiarBuffer();
+                }   
                 mostrarTransaccionesCuenta();
                 break;
             
@@ -97,7 +129,6 @@ void mostrarHistorialInterfaz(void) {
                     break;
                 }
                 
-                limpiarBuffer();
                 mostrarTransaccionesTarjeta();
             break;
 

@@ -11,21 +11,39 @@
 
 
 void mostrarCuentas(Usuario *usuario){
-
-    printf("Seleccione una cuenta:\n");
-
-    for (int i = 0; i < usuario->numCuentasDisp; i++)
+    
+    
+    int opcion = -1;
+    do
     {
-        printf("[%d] %s\n", i, usuario->cuentasDisp[i].numCuenta);
-    }
+        clearScreen();
+        printf("Seleccione una cuenta: \n");
+        for (int i = 0; i < getUsuarioActual()->numCuentasDisp; i++)
+        {
+            printf("[%d] %s\n",i, getUsuarioActual()->cuentasDisp[i].numCuenta);
+        }
 
-    printf("Seleccione una cuenta: ");
-    char bufferOpcion[10];
-    fgets(bufferOpcion, sizeof(bufferOpcion), stdin);  
-    int opcion = leerInteger(bufferOpcion);
+        printf("Ingrese el numero de referencia de la cuenta: ");
+        char bufferOpcion[10];
+        fgets(bufferOpcion, sizeof(bufferOpcion), stdin);  
+        opcion = leerInteger(bufferOpcion);
+        if (opcion < 0 || opcion > ((getUsuarioActual()->numCuentasDisp) - 1))
+        {
+            clearScreen();
+            opcion = -1;
+            printf("Opciones incorrecta\n");
+            printf("Presiona enter para continuar...");
+            limpiarBuffer();
+        }
+        
+
+        
+        
+    } while (opcion == -1);
+    
+    
 
     usuario->cuentaActual = usuario->cuentasDisp[opcion];
-    printf("Cuenta actual: %s\n", usuario->cuentaActual.numCuenta);
     mostrarInicioInterfaz();
 
 }
@@ -35,6 +53,7 @@ int iniciarSesion(){
     char bufferDni[30];
     char bufferContrasena[20];
 
+    printf("<<Inicio de sesion>>\n");
     //mostrar-leer dni, eliminar \n de dni
     printf("Dni: ");
     fgets(bufferDni, sizeof(bufferDni), stdin);

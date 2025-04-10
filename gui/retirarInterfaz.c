@@ -13,7 +13,10 @@ void mostrarRetirarInterfaz(void){
     do{
         clearScreen();
 
-        printf("Retirar Dinero\n");
+        printf("<<Retirar Dinero>>\n");
+        printf("*-------------*\n");
+        printf("| Saldo: %2.f |\n", getUsuarioActual()->cuentaActual.saldo);
+        printf("*-------------*\n");
         printf("[0] Volver al menu principal\n"
             "Introduzca la cantidad a retirar ('0' para cancelar): ");
         fgets(buffer, sizeof(buffer), stdin);
@@ -59,6 +62,7 @@ void mostrarRetirarInterfaz(void){
                     printf("Operacion cancelada\n");
                     printf("Persiona enter para continuar...");
                     limpiarBuffer();
+                    return;
                     break;
                 default:
                     clearScreen();
