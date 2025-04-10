@@ -50,7 +50,6 @@ void cargarPathFicheros(){
     strcpy(pathUsuario, getConfig("pathUsuario"));
     strcpy(pathBD, getConfig("pathBD"));
 
-    printf("Transacciones config: %s", pathTransaccion);
 
 
     fclose(fileConfig);

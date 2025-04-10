@@ -110,7 +110,8 @@ void mostrarHistorialInterfaz(void) {
                 operacionCorrecta = cargarTransaccionesCuenta(getUsuarioActual()->cuentaActual.numCuenta);
                 if (operacionCorrecta != 0)
                 {
-                    printf("Ha habido un error al cargar las transacciones\n");
+                    clearScreen();
+                    printf("No hay transacciones diponibles para mostrar\n");
                     printf("Presiona enter para continuar...");
                     limpiarBuffer();
                     break;
@@ -123,7 +124,8 @@ void mostrarHistorialInterfaz(void) {
                 operacionCorrecta = cargarTransaccionesCuenta(getUsuarioActual()->cuentaActual.numCuenta);
                 if (operacionCorrecta != 0)
                 {
-                    printf("Ha habido un error al cargar las transacciones\n");
+                    clearScreen();
+                    printf("No hay transacciones diponibles para mostrar\n");
                     printf("Presiona enter para continuar...");
                     limpiarBuffer();
                     break;

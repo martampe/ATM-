@@ -6,6 +6,7 @@
 #include <tarjeta.h>
 #include "usuarioHandler.h"
 #include <time.h>
+#include "leerConsola.h"
 
 static sqlite3* dbHandler = NULL;
 
@@ -123,7 +124,7 @@ int asignarTarjetas(Cuenta *cuenta) {
     // Primero contar las tarjetas
     int numTarj = contarTarjetas(cuenta->numCuenta);
     if (numTarj <= 0) return numTarj;
-    
+  
     // Asignar memoria para las tarjetas
     cuenta->numTarjetasDisp = numTarj;
     cuenta->tarjetasDisp = calloc(numTarj, sizeof(Tarjeta));
@@ -420,7 +421,6 @@ Cuenta* cargarCuenta(const char *numCuenta) {
 
     Cuenta *cuenta = NULL;
     if (sqlite3_step(stmt) == SQLITE_ROW) {
-        printf("Cuenta encontrada\n");
         cuenta = (Cuenta*)malloc(sizeof(Cuenta));
         if (cuenta == NULL) {
             printf(" Error al asignar memoria para la cuenta.\n");
@@ -435,6 +435,8 @@ Cuenta* cargarCuenta(const char *numCuenta) {
         strcpy(cuenta->fechaCreacion, (const char*)sqlite3_column_text(stmt, 3));
         cuenta->estado = sqlite3_column_int(stmt, 4);
         strcpy(cuenta->dniTitular, (const char*)sqlite3_column_text(stmt, 5));
+        int rt = asignarTarjetas(cuenta);
+        
     }
 
     sqlite3_finalize(stmt);
@@ -674,7 +676,6 @@ int registrarIngreso(const char *numCuentaDest, double cant){
     
     char fecha[11]; // Espacio para "yyyy-mm-dd" + caracter nulo
     strftime(fecha, sizeof(fecha), "%Y-%m-%d", tm_info);
-    printf("FECHA: %s", fecha);
 
     sqlite3_bind_text(stmt, 1, numCuentaDest, -1, SQLITE_STATIC);
     sqlite3_bind_double(stmt, 2, cant);
@@ -688,7 +689,6 @@ int registrarIngreso(const char *numCuentaDest, double cant){
         return -1;
     }
 
-    printf("Ingresp registrado correctamente\n");
 
     sqlite3_finalize(stmt);
     return 0;
@@ -709,7 +709,6 @@ int registrarRetiro(const char *numCuentaOrig, double cant){
     
     char fecha[11]; // Espacio para "yyyy-mm-dd" + caracter nulo
     strftime(fecha, sizeof(fecha), "%Y-%m-%d", tm_info);
-    printf("FECHA: %s", fecha);
 
     sqlite3_bind_text(stmt, 1, numCuentaOrig, -1, SQLITE_STATIC);
     sqlite3_bind_double(stmt, 2, cant);
@@ -723,7 +722,6 @@ int registrarRetiro(const char *numCuentaOrig, double cant){
         return -1;
     }
 
-    printf("Retiro registrado correctamente\n");
 
     sqlite3_finalize(stmt);
     return 0;
@@ -744,7 +742,6 @@ int registrarTransaccion(const char *cuentaOrigen, const char *cuentaDestino, do
     
     char fecha[11]; // Espacio para "yyyy-mm-dd" + caracter nulo
     strftime(fecha, sizeof(fecha), "%Y-%m-%d", tm_info);
-    printf("FECHA: %s", fecha);
 
     sqlite3_bind_text(stmt, 1, cuentaOrigen, -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 2, cuentaDestino, -1, SQLITE_STATIC);
@@ -995,7 +992,6 @@ int ingresarDinero(const char* numCuenta, double cantidad) {
         return -1;
     }
 
-    printf("Dinero ingresado correctamente.\n");
     sqlite3_finalize(stmt);
 
     registrarIngreso(numCuenta, cantidad);
@@ -1021,7 +1017,6 @@ int retirarDinero(const char* numCuenta, double cantidad) {
 
     if (saldoActual < cantidad) {
         printf("Saldo insuficiente. Tienes: %.2f\n", saldoActual);
-        sqlite3_finalize(stmt);
         return -1;
     }
 
@@ -1037,7 +1032,6 @@ int retirarDinero(const char* numCuenta, double cantidad) {
         return -1;
     }
 
-    printf("Dinero retirado correctamente.\n");
     sqlite3_finalize(stmt);
     registrarRetiro(numCuenta, cantidad);
     return 0;

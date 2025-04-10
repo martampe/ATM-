@@ -52,8 +52,8 @@ void mostrarRetirarInterfaz(void){
                     {
                         printf("Error en la retirada de dinero\n");
                     }
-                    
-                    printf("Retirando %d euros\n", cantidad);
+                    getUsuarioActual()->cuentaActual.saldo -= cantidad;
+                    printf("Retiro de %d euros realizado correctamente\n", cantidad);
                     printf("Persiona enter para continuar...");
                     limpiarBuffer();
                     break;

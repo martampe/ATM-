@@ -53,6 +53,14 @@ void mostrarTransaccionInterfaz(void){
             if (cantidad > 0)
             {
                 operacionCorrecta = realizarTransferencia(getUsuarioActual()->cuentaActual.numCuenta, bufferISBN, cantidad);
+                if (operacionCorrecta != 0)
+                {
+                    clearScreen();
+                    printf("Ha habido un problema al realizar la transaccion\n");
+                    printf("Presiona enter para continuar...");
+                    limpiarBuffer();
+                }
+                getUsuarioActual()->cuentaActual.saldo -= cantidad;
                 clearScreen();
                 printf("Operacion realizada a ISBN: %s de %d euros\n", bufferISBN, cantidad);
                 printf("Presiona enter para continuar...");
