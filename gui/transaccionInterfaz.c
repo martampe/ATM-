@@ -10,7 +10,7 @@
 void mostrarTransaccionInterfaz(void){
 
     char bufferSeleccion[3];
-    char bufferISBN[30];
+    char bufferIBAN[30];
     char bufferCantidad[10];
     int cantidad;
     int operacionCorrecta = -1;
@@ -38,11 +38,20 @@ void mostrarTransaccionInterfaz(void){
             printf("Realizando transaccion\n");
 
             
-            
+            int mismoIBAN = 1;
             do
             {
+                if (mismoIBAN == 0)
+                {
+                    clearScreen();
+                    printf("No se puede realizar una transaccion a tu misma cuenta\n");
+                    printf("Presione enter para continuar...");
+                    limpiarBuffer();
+                } 
+                clearScreen();
                 printf("Introduce el ISBN destino: ");
-            } while ((leerEntradaSegura(bufferISBN, sizeof(bufferISBN))) != 1);
+                
+            } while (((leerEntradaSegura(bufferIBAN, sizeof(bufferIBAN))) != 1) || (mismoIBAN = strcmp(bufferIBAN, getUsuarioActual()->cuentaActual.numCuenta)) == 0);
             
 
             
@@ -52,17 +61,18 @@ void mostrarTransaccionInterfaz(void){
             cantidad = leerInteger(bufferCantidad);
             if (cantidad > 0)
             {
-                operacionCorrecta = realizarTransferencia(getUsuarioActual()->cuentaActual.numCuenta, bufferISBN, cantidad);
+                operacionCorrecta = realizarTransferencia(getUsuarioActual()->cuentaActual.numCuenta, bufferIBAN, cantidad);
                 if (operacionCorrecta != 0)
                 {
                     clearScreen();
                     printf("Ha habido un problema al realizar la transaccion\n");
                     printf("Presiona enter para continuar...");
                     limpiarBuffer();
+                    return;
                 }
                 getUsuarioActual()->cuentaActual.saldo -= cantidad;
                 clearScreen();
-                printf("Operacion realizada a ISBN: %s de %d euros\n", bufferISBN, cantidad);
+                printf("Operacion realizada a ISBN: %s de %d euros\n", bufferIBAN, cantidad);
                 printf("Presiona enter para continuar...");
                 limpiarBuffer();
             } else {

@@ -768,6 +768,31 @@ int realizarTransferencia(const char *cuentaOrig, const char *cuentaDest, double
 
     sqlite3_stmt *stmt;
 
+    //Comprobar si existe cuenta destino
+    char *sql = "SELECT COUNT(*) FROM Cuenta WHERE numCuenta = ?;";
+    if (sqlite3_prepare(dbHandler, sql, -1, &stmt, NULL) != SQLITE_OK)
+    {
+        printf("Ha habido un error al preparar la consulta\n");
+        return -1;
+    }
+
+    sqlite3_bind_text(stmt, 1, cuentaDest, -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
+        printf("Error al ejecutar la consulta\n");
+        return -1;
+    }
+
+    if (sqlite3_column_int(stmt, 0) == 0)
+    {
+        printf("No existe la cuenta destino\n");
+    }
+    
+    sqlite3_reset(stmt);
+    sqlite3_clear_bindings(stmt);
+    
+
     //Actualizar cuenta origen
 
     double saldoOrig = consultarSaldo(cuentaOrig);
@@ -775,11 +800,10 @@ int realizarTransferencia(const char *cuentaOrig, const char *cuentaDest, double
     if (saldoOrig < cantidad)
     {
         printf("Error: No se dispone de %.2f euros para tranferir\n", cantidad);
-        sqlite3_finalize(stmt);
         return -1;
     }
     
-    char *sql = "UPDATE Cuenta set saldo = saldo - ? where numCuenta = ?;";
+    sql = "UPDATE Cuenta set saldo = saldo - ? where numCuenta = ?;";
     sqlite3_prepare(dbHandler, sql, -1, &stmt, NULL);
     sqlite3_bind_double(stmt, 1, cantidad);
     sqlite3_bind_text(stmt, 2, cuentaOrig, -1, SQLITE_STATIC);
@@ -1016,7 +1040,6 @@ int retirarDinero(const char* numCuenta, double cantidad) {
     double saldoActual = consultarSaldo((char*)numCuenta);
 
     if (saldoActual < cantidad) {
-        printf("Saldo insuficiente. Tienes: %.2f\n", saldoActual);
         return -1;
     }
 
