@@ -7,7 +7,7 @@
 #include "cuentasDisponibles.h"
 #include "tarjeta.h"
 #include "transaccion.h"
-#include "../resources/bd/librerias/sqlite3.h"
+#include "sqlite3.h"
 
 void abrirBD();
 Usuario *cargarUsuario(const char *dni, int password);
