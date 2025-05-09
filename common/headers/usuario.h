@@ -2,7 +2,6 @@
 #define USUARIO_H
 
 #include "cuenta.h"
-#include "cuentasDisponibles.h"
 #include "transaccion.h"
 
 typedef enum{

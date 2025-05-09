@@ -7,7 +7,6 @@
 #include "bd.h"
 #include <stdlib.h>
 #include "usuarioHandler.h"
-#include "cuentasDisponibles.h"
 
 
 void mostrarCuentas(Usuario *usuario){

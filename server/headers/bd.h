@@ -4,7 +4,6 @@
 #include "transaccion.h"
 #include "usuario.h"
 #include "cuenta.h"
-#include "cuentasDisponibles.h"
 #include "tarjeta.h"
 #include "transaccion.h"
 #include "sqlite3.h"

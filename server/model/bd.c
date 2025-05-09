@@ -6,7 +6,6 @@
 #include <tarjeta.h>
 #include "usuarioHandler.h"
 #include <time.h>
-#include "leerConsola.h"
 
 static sqlite3* dbHandler = NULL;
 
@@ -28,7 +27,7 @@ void abrirBD(){
 int borrarBD(){
     sqlite3_stmt *stmt;
 
-    char *sql = "DELETE FROM Transaccion;";
+    const char *sql = "DELETE FROM Transaccion;";
     if (sqlite3_prepare(dbHandler, sql, -1, &stmt, NULL)) return -1;
     if((sqlite3_step(stmt)) != SQLITE_DONE) return -1;
     sqlite3_reset(stmt);
@@ -37,7 +36,7 @@ int borrarBD(){
     if (sqlite3_prepare(dbHandler, sql, -1, &stmt, NULL)) return -1;
     if((sqlite3_step(stmt)) != SQLITE_DONE) return -1;
     sqlite3_reset(stmt);
-
+    
     sql = "DELETE FROM AccesoUsCuenta;";
     if (sqlite3_prepare(dbHandler, sql, -1, &stmt, NULL)) return -1;
     if((sqlite3_step(stmt)) != SQLITE_DONE) return -1;
@@ -102,7 +101,7 @@ int contarTarjetas(const char *numCuenta) {
     sqlite3_stmt *countStmt;
     int count = 0;
     
-    char *sql = "SELECT COUNT(*) FROM Tarjeta WHERE numCuenta = ?;";
+    const char *sql = "SELECT COUNT(*) FROM Tarjeta WHERE numCuenta = ?;";
     if (sqlite3_prepare_v2(dbHandler, sql, -1, &countStmt, NULL) != SQLITE_OK) {
         return -1;
     }
@@ -119,7 +118,7 @@ int contarTarjetas(const char *numCuenta) {
 
 int asignarTarjetas(Cuenta *cuenta) {
     sqlite3_stmt *stmt;
-    char *sql = "SELECT numTarjeta FROM Tarjeta WHERE numCuenta = ?;";
+    const char *sql = "SELECT numTarjeta FROM Tarjeta WHERE numCuenta = ?;";
     
     // Primero contar las tarjetas
     int numTarj = contarTarjetas(cuenta->numCuenta);
@@ -127,7 +126,7 @@ int asignarTarjetas(Cuenta *cuenta) {
   
     // Asignar memoria para las tarjetas
     cuenta->numTarjetasDisp = numTarj;
-    cuenta->tarjetasDisp = calloc(numTarj, sizeof(Tarjeta));
+    cuenta->tarjetasDisp = (Tarjeta *)calloc(numTarj, sizeof(Tarjeta));
     
     // Preparar consulta para obtener datos
     if (sqlite3_prepare_v2(dbHandler, sql, -1, &stmt, NULL) != SQLITE_OK) {
@@ -557,7 +556,7 @@ int cargarTransaccionesCuenta(char* numCuenta){
         return -1;
     }
     
-    Transaccion *transacciones = malloc(sizeof(Transaccion) * contador);
+    Transaccion *transacciones = (Transaccion *)malloc(sizeof(Transaccion) * contador);
 
     if (!transacciones)
     {

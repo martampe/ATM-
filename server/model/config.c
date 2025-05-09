@@ -4,7 +4,7 @@
 #include <string.h>
 
 static FILE *config = NULL;
-static char *pathConfig = "resources/config/config.txt";
+static const char *pathConfig = "resources/config/config.txt";
 static char pathAccesoCuenta[100];
 static char pathCuenta[100];
 static char pathTarjeta[100];

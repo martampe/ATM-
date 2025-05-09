@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tarjeta.h"
-#include "leerConsola.h"
 #include "cuenta.h"
 #include "bd.h"
 #include "config.h"
